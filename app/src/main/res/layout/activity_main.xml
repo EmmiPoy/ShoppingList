@@ -6,8 +6,12 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/gameRecyclerView"
+    <fragment
+        android:id="@+id/prodfragment"
+        android:name="com.example.moexample.ProductFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+
+        tools:layout_editor_absoluteX="185dp"
+        tools:layout_editor_absoluteY="406dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>
