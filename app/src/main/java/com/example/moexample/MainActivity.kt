@@ -7,6 +7,68 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.fragment.app.Fragment //Tulikohan tämä viimeisimmäksi...
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.*
+
+//SSL adapterin kanssa ongelmaa, kts mallia esim:
+//https://hinchman-amanda.medium.com/working-with-recyclerview-in-android-kotlin-84a62aef94ec
+// 2) TÄSSÄ HYVÄ YKSITYSIKOHTAINEN ESIMERKKI!
+//https://www.raywenderlich.com/1560485-android-recyclerview-tutorial-with-kotlin
+
+//NAVIGOINTINAPIT: KTS:https://www.youtube.com/watch?v=fODp1hZxfng
+class MainActivity : AppCompatActivity() {
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        //8.1 Readme.md:stä
+        val kategoryFragment = KategoryFragment()
+        val productFragment =ProductFragment()
+        val shoppingListFragment = ShoppingListFragment()
+
+        //8.2.
+        makeCurrentFragment(kategoryFragment)
+
+        //8.3.
+        bottom_navigation.setOnNavigationItemSelectedListener {
+            when (it.itemId){
+                R.id.ic_home -> makeCurrentFragment(kategoryFragment)
+                R.id.ic_products -> makeCurrentFragment(productFragment)
+                R.id.ic_shoppinglist -> makeCurrentFragment(shoppingListFragment)
+            }
+            true
+        }
+
+    }
+
+    //8.2
+    private fun makeCurrentFragment(fragment: Fragment) =
+        supportFragmentManager.beginTransaction().apply {
+            replace(R.id.fl_wrapper,fragment)
+            commit()
+        }
+
+
+
+}
+
+//**********************BACKUP:
+/*
+package com.example.moexample
+
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.util.Log.d
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -150,6 +212,12 @@ class GameAdapter: RecyclerView.Adapter<GameAdapter.ViewHolder>() {
         }
     }
 }
+
+
+
+
+ */
+
 
 
 
