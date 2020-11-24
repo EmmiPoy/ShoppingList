@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.fragment.app.Fragment //Tulikohan tämä viimeisimmäksi...
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -26,7 +27,33 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        //8.1 Readme.md:stä
+        val kategoryFragment = KategoryFragment()
+        val productFragment =ProductFragment()
+        val shoppingListFragment = ShoppingListFragment()
+
+        //8.2.
+        makeCurrentFragment(kategoryFragment)
+
+        //8.3.
+        bottom_navigation.setOnNavigationItemSelectedListener {
+            when (it.itemId){
+                R.id.ic_home -> makeCurrentFragment(kategoryFragment)
+                R.id.ic_products -> makeCurrentFragment(productFragment)
+                R.id.ic_shoppinglist -> makeCurrentFragment(shoppingListFragment)
+            }
+            true
         }
+
+    }
+
+    //8.2
+    private fun makeCurrentFragment(fragment: Fragment) =
+        supportFragmentManager.beginTransaction().apply {
+            replace(R.id.fl_wrapper,fragment)
+            commit()
+        }
+
 
 
 }
