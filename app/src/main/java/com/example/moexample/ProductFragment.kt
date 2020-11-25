@@ -10,12 +10,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.moexample.ProductFragment.Companion.products
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_product.*
+import kotlinx.android.synthetic.main.product_row.*
+import kotlinx.android.synthetic.main.product_row.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -35,6 +39,7 @@ class ProductFragment : Fragment() {
     //private lateinit var database: ProductDatabase//ScoreDatabase
     private lateinit var dao: ProductDatabaseDao
 
+
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -51,9 +56,20 @@ class ProductFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+
         getData()
+        /*
+        //SSL 25.11.2020 Yritin tänne sitä onclickiä...väärä paikka recyclerview:n buttonille
+        //mutto jos tulee tarve napille joka on recyclerin ulkopuolella, sen paikka vois olla täällä?
+        val view=inflater.inflate(R.layout.fragment_product, container, false)
+        val prodKategoryBtn=view.findViewById<TextView>(R.id.prodkategoryButton)
+        return view
+        */
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_product, container, false)
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -150,11 +166,25 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
         //TODO laita tänne ja layoutille lisää elementtejä ja kytke toisiinsa
         private val textView: TextView = itemView.findViewById(R.id.prodTextView)
 
+        val prodCategoryBtn: Button = itemView.findViewById(R.id.prodkategoryButton)//SSL 25.11.2020
+
         fun bind(item: Product) {
             val itemtext = item.p_id.toString()+":"+item.p_name+", kategoria:"+item.k_id.toString()
-            //val itemtext =item
             textView.setText(itemtext);
+
+            prodCategoryBtn.setOnClickListener {
+                prodCategoryBtn.setText("Painettu") //SSL 25.11.2020 no tänne se taitaa onnistua!
+                setKategory(item.p_id) //SSL 25.11.2020
+            }
+        }
+
+        private fun setKategory(prodId:Int) {
+            //TODO("Not yet implemented")
+            //Saisko tähän tehtyä dialogin, jolla käyttäjä valitsee kategorian tuottelle?
+            val annettuid = prodId
+
         }
     }
+
 }
 

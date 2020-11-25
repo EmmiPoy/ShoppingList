@@ -33,16 +33,8 @@ Tee loput fragmentit samoin
  8.2. tee funktio makeCurrentFragment, jossa replace:lla korvaat kulloisenkin fragmentin
  8.3 onCreateen botton_navigation:lle onClick Listener
 
---------------- TODO:
-- Miten saat fragmenteille kannasta tiedot
-- Kategoria-fragmentin itemistä kun klikataan, navigointi product-fragmenttiinm jossa tuolloin näytetään vain sen kategorian tuotteet
-
-
-
-
-
-
-
-Uuden fragmentin lisääminen:
-Mene resource-layout-kansioon
-
+------
+25.11.2020 17:30
+muutettu: product_row.xml (lisätty kategoria nappi, säädetty kenttien paikkaa, ei vielä ok)
+Klikkaus kiinni productFragmentissa.
+    https://developer.android.com/codelabs/kotlin-android-training-interacting-with-items#3
