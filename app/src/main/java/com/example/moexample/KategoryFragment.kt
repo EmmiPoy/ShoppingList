@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -126,9 +127,9 @@ class KategoryAdapter: RecyclerView.Adapter<KategoryAdapter.ViewHolder>() {
     //Show data
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        private val imageButton: ImageButton = itemView.findViewById(R.id.imageButton)
+        private val button: Button = itemView.findViewById(R.id.katButton)
         fun bind(item: Kategory) {
-            //button.setText(item.id.toString()+":"+item.name+":"+item.sum)
+            button.setText(item.k_id.toString()+":"+item.k_name)
             //val itemtext = item.k_id.toString() + ":" + item.k_name
 
             // ei ole vielä kuvia näihin ja mitä tähänn muutenkin laitetaan

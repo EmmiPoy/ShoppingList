@@ -187,7 +187,7 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
     //Show data
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         //TODO laita tänne ja layoutille lisää elementtejä ja kytke toisiinsa
-        private val textView: TextView = itemView.findViewById(R.id.prodTextView)
+        private val textView: TextView = itemView.findViewById(R.id.checkBox2)
 
         val prodCategoryBtn: Button = itemView.findViewById(R.id.prodkategoryButton)//SSL 25.11.2020
 
