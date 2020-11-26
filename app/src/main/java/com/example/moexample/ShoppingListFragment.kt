@@ -149,7 +149,7 @@ class ShopListAdapter: RecyclerView.Adapter<ShopListAdapter.ViewHolder>() {
         //fun bind(item: Game) {
         fun bind(item: Product) {
             //button.setText(item.id.toString()+":"+item.name+":"+item.sum)
-            val itemtext = item.p_name+item.p_amount.toString()
+            val itemtext = item.p_name + " " + item.p_amount.toString() + "kpl"
 
             checkBox.setText(itemtext);
         }
