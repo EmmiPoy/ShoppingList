@@ -43,5 +43,9 @@ interface ProductDatabaseDao {
     @Query("SELECT * FROM kategory ORDER BY k_id;")
     fun getKategories() : List<Kategory>
 
+    @Query("SELECT * FROM product WHERE p_onList= 1;")
+    fun getShoppingList() : List<Product>
+
+
 }
 
