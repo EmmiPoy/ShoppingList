@@ -1,14 +1,20 @@
 package com.example.moexample
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 //import androidx.room.Insert
 import androidx.room.Query
 //import androidx.room.Update
 
 @Dao
 interface ProductDatabaseDao {
-    //@Insert
-    //fun insert(game: Game)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun addProduct(product: Product)
+
+    @Query ("SELECT * FROM product")
+    fun readAllData(): LiveData<List<Product>>
 
     @Query("INSERT INTO product (p_name,k_id,p_amount,p_onList,p_unit) VALUES (:pname, :kid, :pamount, :ponlist, :punit);")
     fun insertProduct(pname: String, kid: Int, pamount:Int, ponlist:Boolean,punit:String)
@@ -36,5 +42,6 @@ interface ProductDatabaseDao {
 
     @Query("SELECT * FROM kategory ORDER BY k_id;")
     fun getKategories() : List<Kategory>
+
 }
 

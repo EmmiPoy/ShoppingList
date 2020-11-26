@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.product_row.*
 import kotlinx.coroutines.*
 
 
@@ -92,6 +93,8 @@ class MainActivity : AppCompatActivity() {
             //TODO tämä kovakoodaus pois lopullisesta
             val kat = 7;
             val kathed = 1;
+
+/*
             //Huom, lokaali muuttuja:
             val products =
                 dao.getProductsAllOrderByKategory() //Tämä on ok, nyt ei tehdä uutta muuttujaa vaan käytetään sitä companionobjectissa olevaa
@@ -99,7 +102,7 @@ class MainActivity : AppCompatActivity() {
                 dao.insertProduct("paperi", kat, 1, true, "kpl");
                 dao.insertProduct("rulla", kat, 1, true, "kpl");
                 dao.insertProduct("appelsiini", kathed, 5, true, "kpl");
-            }
+            }*/
             /*
             d("debug:", "4")
             //Output to log with key "debug:"
