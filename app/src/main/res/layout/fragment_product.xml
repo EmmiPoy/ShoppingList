@@ -1,14 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     tools:context=".ProductFragment">
 
     <!-- TODO: Update blank fragment layout -->
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/prodRecyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_width="385dp"
+        android:layout_height="709dp">
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/addProduct1"
+        android:layout_width="85dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/addProduct"
+            android:layout_width="match_parent"
+            android:layout_height="53dp"
+            android:layout_gravity="clip_horizontal|center"
+            android:hint="nimi" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/buttonAdd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center|right"
+        android:text="Lisää" />
+
+    <EditText
+        android:id="@+id/addProductAmount"
+        android:layout_width="128dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center|left"
+        android:ems="10"
+        android:inputType="number" />
+
 
 </FrameLayout>

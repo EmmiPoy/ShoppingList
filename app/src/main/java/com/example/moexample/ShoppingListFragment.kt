@@ -95,7 +95,7 @@ class ShoppingListFragment : Fragment() {
             //tätä ei välttämättä tarvita tässä fragmentissa, mutta olkoon toistaiseksi
             //ProductFragment.kategories = dao.getKategories()
             products =
-                dao.getProductsAllOrderByKategory() //käytetään tämän fragmentin products, joka on companion
+                dao.getShoppingList() //käytetään tämän fragmentin products, joka on companion
 
             /*
         d("debug:", "3")
@@ -149,7 +149,7 @@ class ShopListAdapter: RecyclerView.Adapter<ShopListAdapter.ViewHolder>() {
         //fun bind(item: Game) {
         fun bind(item: Product) {
             //button.setText(item.id.toString()+":"+item.name+":"+item.sum)
-            val itemtext = item.p_name+item.p_amount.toString()
+            val itemtext = item.p_name + " " + item.p_amount.toString() + "kpl"
 
             checkBox.setText(itemtext);
         }

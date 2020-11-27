@@ -6,22 +6,22 @@ package com.example.moexample
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextUtils
 import android.util.Log.d
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.moexample.ProductFragment.Companion.kategories
 import com.example.moexample.ProductFragment.Companion.products
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_product.*
-import kotlinx.android.synthetic.main.product_row.*
-import kotlinx.android.synthetic.main.product_row.view.*
+import kotlinx.android.synthetic.main.fragment_product.view.*
 import kotlinx.coroutines.*
 
 
@@ -38,6 +38,8 @@ private const val ARG_PARAM2 = "param2"
 class ProductFragment : Fragment() {
     //private lateinit var database: ProductDatabase//ScoreDatabase
     private lateinit var dao: ProductDatabaseDao
+
+    private lateinit var mProductViewModel: ProductViewModel
 
 
     // TODO: Rename and change types of parameters
@@ -57,20 +59,37 @@ class ProductFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-
         getData()
-        /*
+
         //SSL 25.11.2020 Yritin tänne sitä onclickiä...väärä paikka recyclerview:n buttonille
         //mutto jos tulee tarve napille joka on recyclerin ulkopuolella, sen paikka vois olla täällä?
-        val view=inflater.inflate(R.layout.fragment_product, container, false)
-        val prodKategoryBtn=view.findViewById<TextView>(R.id.prodkategoryButton)
+        val view = inflater.inflate(R.layout.fragment_product, container, false)
+
+        mProductViewModel = ViewModelProvider(this).get(ProductViewModel::class.java)
+
+        //val BtnAdd=view.findViewById<TextView>(R.id.buttonAdd)
+        view.buttonAdd.setOnClickListener {
+            insertDataToDatabase()
+        }
         return view
-        */
-
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_product, container, false)
-
     }
+    private fun insertDataToDatabase()
+    {
+        //val productId = addProductId.text
+
+        val productName = addProduct.text.toString()
+        val productAmount = addProductAmount.text
+
+        if(inputCheck(productName, productAmount)) {
+            val product = Product(0, productName,3,false, Integer.parseInt(productAmount.toString()),"kg" )
+            mProductViewModel.addProduct(product)
+        }
+    }
+
+    private fun inputCheck (productName: String, productAmount: Editable ): Boolean{
+        return !(TextUtils.isEmpty(productName) && productAmount.isEmpty())
+    }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -89,15 +108,15 @@ class ProductFragment : Fragment() {
         lateinit var products: List<Product> //Nämä haetaan nyt tässä fragmentissa
         lateinit var kategories: List<Kategory>
         lateinit var conteksti: Context
-         /* Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment ProductFragment.
-         */
+        /* Use this factory method to create a new instance of
+        * this fragment using the provided parameters.
+        *
+        * @param param1 Parameter 1.
+        * @param param2 Parameter 2.
+        * @return A new instance of fragment ProductFragment.
+        */
 
-//https://stackoverflow.com/questions/47400681/set-layoutmanager-on-a-fragment
+        //https://stackoverflow.com/questions/47400681/set-layoutmanager-on-a-fragment
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance() = ProductFragment()
@@ -117,7 +136,7 @@ class ProductFragment : Fragment() {
 
     private fun getData() {
         val application = requireNotNull(this.activity).application
-        dao =ProductDatabase.getInstance(application).productDatabaseDao
+        dao = ProductDatabase.getInstance(application).productDatabaseDao
 
         //Run query in separate thread, use Coroutines
         GlobalScope.launch(context = Dispatchers.Default) {
@@ -168,7 +187,7 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
     //Show data
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         //TODO laita tänne ja layoutille lisää elementtejä ja kytke toisiinsa
-        private val textView: TextView = itemView.findViewById(R.id.prodTextView)
+        private val textView: TextView = itemView.findViewById(R.id.checkBox2)
 
         val prodCategoryBtn: Button = itemView.findViewById(R.id.prodkategoryButton)//SSL 25.11.2020
 
@@ -225,11 +244,10 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
 
             val dialog: android.app.AlertDialog? = builder.create() //tulikohan tästä gradleenkin rivi ?
             dialog?.show()
-            
+
 
 
         }
     }
 
 }
-
