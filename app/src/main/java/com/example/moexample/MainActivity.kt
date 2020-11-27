@@ -80,6 +80,7 @@ class MainActivity : AppCompatActivity() {
             d("debug:", "2")
             val kategorys = dao.getKategories() //huom, lokaali muuttuja
             if (kategorys.isEmpty()) {
+                dao.insertKategory(0, "Sekalaiset", 1, true, R.drawable.lataus); //SSL todo tälle oma kuva
                 dao.insertKategory(1, "Hedelmät", 1, true, R.drawable.lataus);
                 dao.insertKategory(2, "Vihannekset", 2, true, R.drawable.vihannekset);
                 dao.insertKategory(3, "Leivät", 3, true, R.drawable.leipa);

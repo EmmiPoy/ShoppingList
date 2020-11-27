@@ -5,6 +5,7 @@ package com.example.moexample
 //KTS: https://medium.com/inside-ppl-b7/recyclerview-inside-fragment-with-android-studio-680cbed59d84
 import android.content.Context
 import android.content.DialogInterface
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextUtils
@@ -15,6 +16,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -70,23 +72,46 @@ class ProductFragment : Fragment() {
         //val BtnAdd=view.findViewById<TextView>(R.id.buttonAdd)
         view.buttonAdd.setOnClickListener {
             insertDataToDatabase()
+            refreshView()//SSL 27.11.2020
         }
         return view
     }
+
+    private fun refreshView() {
+        //SSL 27.11.2020
+        //https://stackoverflow.com/questions/20702333/refresh-fragment-at-reload
+        val ft: FragmentTransaction = fragmentManager!!.beginTransaction()
+        if (Build.VERSION.SDK_INT >= 26) {
+            ft.setReorderingAllowed(false)
+        }
+        ft.detach(this).attach(this).commit()
+    }
+
     private fun insertDataToDatabase()
     {
         //val productId = addProductId.text
 
         val productName = addProduct.text.toString()
         val productAmount = addProductAmount.text
+        var amoutToApply = productAmount.toString()//SSL Editable tyypin kanssa tui jotain ongelmaa, siksi tämä
 
-        if(inputCheck(productName, productAmount)) {
-            val product = Product(0, productName,3,false, Integer.parseInt(productAmount.toString()),"kg" )
+        val defaultKategoryId = 0 //Laitetaan toistaiseksi näin
+        //Kaatui, jos ei antanut määrää. Määrä ei pakollinen, laitetaan oletukssena 0:ksi
+        //if(inputCheck(productName, productAmount)) {
+        if(inputCheck(productName)) {
+            if (productAmount.isNullOrBlank()) {
+                amoutToApply="0"
+            }
+            //val product = Product(0, productName,3,false, Integer.parseInt(productAmount.toString()),"kg" )
+            val product = Product(0, productName, defaultKategoryId,true, Integer.parseInt(amoutToApply),"" )
             mProductViewModel.addProduct(product)
         }
     }
 
-    private fun inputCheck (productName: String, productAmount: Editable ): Boolean{
+    private fun inputCheck (productName: String): Boolean{
+        return !(TextUtils.isEmpty(productName))
+    }
+    private fun inputCheckOriginal (productName: String, productAmount: Editable ): Boolean{
         return !(TextUtils.isEmpty(productName) && productAmount.isEmpty())
     }
 
