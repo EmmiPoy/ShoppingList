@@ -80,14 +80,15 @@ class MainActivity : AppCompatActivity() {
             d("debug:", "2")
             val kategorys = dao.getKategories() //huom, lokaali muuttuja
             if (kategorys.isEmpty()) {
-                dao.insertKategory(1, "Hedelmät", 1, true);
-                dao.insertKategory(2, "Vihannekset", 2, true);
-                dao.insertKategory(3, "Leivät", 3, true);
-                dao.insertKategory(4, "Maito", 4, true);
-                dao.insertKategory(5, "Lihat", 5, true);
-                dao.insertKategory(6, "Lemmikit", 6, true);
-                dao.insertKategory(7, "Talous", 7, true);
-                dao.insertKategory(8, "Makeiset", 8, true);
+                dao.insertKategory(1, "Hedelmät", 1, true, R.drawable.lataus);
+                dao.insertKategory(2, "Vihannekset", 2, true, R.drawable.vihannekset);
+                dao.insertKategory(3, "Leivät", 3, true, R.drawable.leipa);
+                dao.insertKategory(4, "Maito", 4, true, R.drawable.maito);
+                dao.insertKategory(5, "Lihat", 5, true, R.drawable.liha);
+                dao.insertKategory(6, "Makeiset", 6, true, R.drawable.makeiset);
+                dao.insertKategory(7, "Lemmikit", 7, true, R.drawable.lemmikit);
+                dao.insertKategory(8, "Talous", 8, true, R.drawable.talous);
+                dao.insertKategory(9, "Makeiset", 9, true, R.drawable.makeiset);
             }
 
             //TODO tämä kovakoodaus pois lopullisesta
