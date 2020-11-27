@@ -7,12 +7,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.moexample.KategoryFragment.Companion.kategories
+import com.example.moexample.KategoryFragment.Companion.kategorys
 import kotlinx.android.synthetic.main.fragment_kategory.*
 import kotlinx.android.synthetic.main.fragment_product.*
 import kotlinx.coroutines.Dispatchers
@@ -58,13 +58,13 @@ class KategoryFragment : Fragment() {
 
         //Tämä piti siirtää on onCreatesta tänne!!!!!
         kategoryRecyclerView.apply {
-            layoutManager = LinearLayoutManager(activity)
+            layoutManager = GridLayoutManager(activity, 3)
             adapter = KategoryAdapter()
         }
     }
 
     companion object {
-        lateinit var kategories: List<Kategory>
+        lateinit var kategorys: List<Kategory>
 
         /**
          * Use this factory method to create a new instance of
@@ -95,7 +95,7 @@ class KategoryFragment : Fragment() {
             Log.d("debug:", " prodfrag 1")
             //tässä vielä paikallisessa muuttujassa
             //tätä ei välttämättä tarvita tässä fragmentissa, mutta olkoon toistaiseksi
-            kategories = dao.getKategories()
+            kategorys = dao.getKategories()
 
         }
     }
@@ -110,13 +110,13 @@ class KategoryAdapter: RecyclerView.Adapter<KategoryAdapter.ViewHolder>() {
 
     //Set number of items on list
     //override fun getItemCount() = 100
-    override fun getItemCount() = kategories.size
+    override fun getItemCount() = kategorys.size
     //Fetch data object (Game) by position, and bind it with ViewHolder
 
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         //val scores = MainActivity.scores
-        val kateg = kategories
+        val kateg = kategorys
 
         d("debug:", "onBindViewHolder position=$position")
         //holder.bind(prod)
@@ -127,13 +127,16 @@ class KategoryAdapter: RecyclerView.Adapter<KategoryAdapter.ViewHolder>() {
     //Show data
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        private val button: Button = itemView.findViewById(R.id.katButton)
-        fun bind(item: Kategory) {
-            button.setText(item.k_id.toString()+":"+item.k_name)
-            //val itemtext = item.k_id.toString() + ":" + item.k_name
+            private val imageView: ImageView = itemView.findViewById(R.id.imageView)
+            private val imageText: TextView = itemView.findViewById(R.id.imageText)
 
-            // ei ole vielä kuvia näihin ja mitä tähänn muutenkin laitetaan
-            //imageButton.setImageDrawable()
+            fun bind(item: Kategory) {
+
+                val text = item.k_name
+                val image = item.k_image
+
+                imageView.setImageResource(image)
+                imageText.setText(text)
         }
     }
 }

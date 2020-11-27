@@ -37,8 +37,8 @@ interface ProductDatabaseDao {
     @Query("DELETE from kategory")
     fun clearKategory()
 
-    @Query("INSERT INTO kategory (k_id, k_name,k_order,k_inUse) VALUES (:kid, :kname, :korder,  :kinuse);")
-    fun insertKategory(kid:Int, kname: String, korder:Int, kinuse:Boolean)
+    @Query("INSERT INTO kategory (k_id, k_name,k_order,k_inUse, k_image) VALUES (:kid, :kname, :korder,  :kinuse, :kimage);")
+    fun insertKategory(kid:Int, kname: String, korder:Int, kinuse:Boolean, kimage:Int)
 
     @Query("SELECT * FROM kategory ORDER BY k_id;")
     fun getKategories() : List<Kategory>
