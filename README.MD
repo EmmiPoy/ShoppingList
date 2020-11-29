@@ -1,3 +1,23 @@
+29.11.2020 Tianne:
+KATEGORIA
+ kuvan klikkaus otettu kiinni, mutta ei vielä teee mitään
+ TODO: kuvan klikkauksesta alunperin suunniteltiin, että menisi tuote sivulle niin, että kategorian tuotteet näytettäsiisn
+   --> työläs? Tehtäiskö niin, että kategoriakuvan klikkauksesta pääsisikin muokkaamaan kategoria?? Kategorian nimeä, järjestystä ja kuvaa?     Poistamaan kategorian, jos siinä ei tuotteita (tai siirtämään kategorian kaikki tuotteet tooiseen kategoriaan)
+ TODO:Uuden kategorian lisääminen
+TUOTE
+  Tuoterivillä mahdollsita nyt valita tuotteelle toinen kategoria, ei vielä mene kantaan (onkohan toteutus ok, aika luova ratkaisu...)
+  TODO: kategorian vaihto kantaan
+  TODO: tuotteen checkbox klikkaus
+  TODO: Tuotteen muutos (nimi määrä yksikkö) ja poisto
+  TODO: layout: tuotteen lisäys ei näy kunnolla, jos tuotteita paljon, se peittää tuotteen alleen, joka puolestaan näkyy "läpi"
+  TODO: refreshView ei toimi aina....
+OSTOSLISTA
+  TODO: tuotteen checkbox klikkaus päivittämään kantaan (?) vai halutaanko jokin toinen toteutus?
+  TODO: pitäisikö companion objektissa oleva "product" nimetä toisin, sekottuukohan jotenkin tuotteet-sivun vastaavaan, 
+    kun ostoslista kaatuili, kun koitin poistaa products companion objektia tuote-sivulta
+  TODO: äänimerkki?
+
+--------------------------------
 NAVIGOINNIN TEKO ALAS: https://www.youtube.com/watch?v=fODp1hZxfng
 
 1) gradleen module: dependencies osioon isätään material 
@@ -49,4 +69,9 @@ https://stackoverflow.com/questions/21028786/how-do-i-open-a-new-fragment-from-a
 
 Miten siirtää dataa fragmentilta toiselle
 https://developer.android.com/guide/fragments/communicate
+
+
+
+Communicate with other fragments | Android Developersdeveloper.android.com › fragments
+27.4.2020 — The fragment uses the callback interface to deliver the event to the parent activity. Kotlin Java More. override fun onListItemClick ...
 
