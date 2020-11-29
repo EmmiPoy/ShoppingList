@@ -137,6 +137,17 @@ class KategoryAdapter: RecyclerView.Adapter<KategoryAdapter.ViewHolder>() {
 
                 imageView.setImageResource(image)
                 imageText.setText(text)
+
+                //SSL 29.11.2020 kopsattu ProductFragmentistä:
+                imageView.setOnClickListener {
+                    setKategoryForProductView(item.k_id)
+                }
+        }
+
+        private fun setKategoryForProductView(kId: Int) {
+            val kategorySelected = kId
+            //TODO valittu kategoria pitää välittää Products-fragmentille ja siirtyä sinne
+            //val productFragment =ProductFragment()
         }
     }
 }

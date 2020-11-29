@@ -34,7 +34,19 @@ Tee loput fragmentit samoin
  8.3 onCreateen botton_navigation:lle onClick Listener
 
 ------
-25.11.2020 17:30
-muutettu: product_row.xml (lisätty kategoria nappi, säädetty kenttien paikkaa, ei vielä ok)
-Klikkaus kiinni productFragmentissa.
+recyclerin napin klikkaus kiinni productFragmentissa
     https://developer.android.com/codelabs/kotlin-android-training-interacting-with-items#3
+
+Miten välittää dataa fragmentilta mainactivitylle:
+https://stackoverflow.com/questions/47850746/how-to-pass-data-from-fragment-to-mainactivity
+
+
+Miten siirtyä fragmentilta toiselle
+https://stackoverflow.com/questions/23212162/how-to-move-from-one-fragment-to-another-fragment-on-click-of-an-imageview-in-an
+
+How do I open a new fragment from another fragment?
+https://stackoverflow.com/questions/21028786/how-do-i-open-a-new-fragment-from-another-fragment
+
+Miten siirtää dataa fragmentilta toiselle
+https://developer.android.com/guide/fragments/communicate
+

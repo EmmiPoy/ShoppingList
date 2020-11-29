@@ -80,16 +80,15 @@ class MainActivity : AppCompatActivity() {
             d("debug:", "2")
             val kategorys = dao.getKategories() //huom, lokaali muuttuja
             if (kategorys.isEmpty()) {
-                dao.insertKategory(0, "Sekalaiset", 1, true, R.drawable.lataus); //SSL todo tälle oma kuva
-                dao.insertKategory(1, "Hedelmät", 1, true, R.drawable.lataus);
-                dao.insertKategory(2, "Vihannekset", 2, true, R.drawable.vihannekset);
-                dao.insertKategory(3, "Leivät", 3, true, R.drawable.leipa);
-                dao.insertKategory(4, "Maito", 4, true, R.drawable.maito);
-                dao.insertKategory(5, "Lihat", 5, true, R.drawable.liha);
-                dao.insertKategory(6, "Makeiset", 6, true, R.drawable.makeiset);
-                dao.insertKategory(7, "Lemmikit", 7, true, R.drawable.lemmikit);
-                dao.insertKategory(8, "Talous", 8, true, R.drawable.talous);
-                dao.insertKategory(9, "Makeiset", 9, true, R.drawable.makeiset);
+                dao.insertKategory(1, "Sekalaiset", 1, true, R.drawable.makeiset); //SSL todo tälle oma kuva
+                dao.insertKategory(2, "Hedelmät", 2, true, R.drawable.lataus);
+                dao.insertKategory(3, "Vihannekset", 3, true, R.drawable.vihannekset);
+                dao.insertKategory(4, "Leivät", 4, true, R.drawable.leipa);
+                dao.insertKategory(5, "Maito", 5, true, R.drawable.maito);
+                dao.insertKategory(6, "Lihat", 6, true, R.drawable.liha);
+                dao.insertKategory(7, "Makeiset", 7, true, R.drawable.makeiset);
+                dao.insertKategory(8, "Lemmikit", 8, true, R.drawable.lemmikit);
+                dao.insertKategory(9, "Talous", 9, true, R.drawable.talous);
             }
 
             //TODO tämä kovakoodaus pois lopullisesta

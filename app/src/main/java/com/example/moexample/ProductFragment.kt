@@ -95,7 +95,7 @@ class ProductFragment : Fragment() {
         val productAmount = addProductAmount.text
         var amoutToApply = productAmount.toString()//SSL Editable tyypin kanssa tui jotain ongelmaa, siksi tämä
 
-        val defaultKategoryId = 0 //Laitetaan toistaiseksi näin
+        val defaultKategoryId = 1 //SSL Laitetaan toistaiseksi näin SSL 29.11.2020 0->1
         //Kaatui, jos ei antanut määrää. Määrä ei pakollinen, laitetaan oletukssena 0:ksi
         //if(inputCheck(productName, productAmount)) {
         if(inputCheck(productName)) {
