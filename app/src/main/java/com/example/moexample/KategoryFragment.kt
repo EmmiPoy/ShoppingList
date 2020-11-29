@@ -148,6 +148,9 @@ class KategoryAdapter: RecyclerView.Adapter<KategoryAdapter.ViewHolder>() {
             val kategorySelected = kId
             //TODO valittu kategoria pitää välittää Products-fragmentille ja siirtyä sinne
             //val productFragment =ProductFragment()
+            //Tai jos ei onnistu/ei ehdi, niin jos vaan päivittäisi kategorian tietoja?
+            // Esim nimeä ja järjestystä? Saisiko kuvaa vaihdettua?
+
         }
     }
 }

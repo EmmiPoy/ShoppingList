@@ -31,6 +31,12 @@ interface ProductDatabaseDao {
     @Query("SELECT * FROM product order by k_id;")
     fun getProductsAllOrderByKategory() :List<Product>
 
+
+    //SSL 29.11.2020
+    @Query("SELECT p_id, p_name, p.k_id, p_onList, p_amount, p_unit, p_unit, k_name, k_order, k_inUse, k_image  FROM product p, kategory k where p.k_id = k.k_id order by k_order;")
+    fun getProductsAllWithKategoryInfo() :List<ProductWithKategoryInfo>
+
+
     @Query("DELETE from product")
     fun clearProduct()
 
@@ -40,7 +46,8 @@ interface ProductDatabaseDao {
     @Query("INSERT INTO kategory (k_id, k_name,k_order,k_inUse, k_image) VALUES (:kid, :kname, :korder,  :kinuse, :kimage);")
     fun insertKategory(kid:Int, kname: String, korder:Int, kinuse:Boolean, kimage:Int)
 
-    @Query("SELECT * FROM kategory ORDER BY k_id;")
+    //@Query("SELECT * FROM kategory ORDER BY k_id;")
+    @Query("SELECT * FROM kategory ORDER BY k_order;") //SSL 29.11.2020 muutettu järjestys käyttämään tätä
     fun getKategories() : List<Kategory>
 
     @Query("SELECT * FROM product WHERE p_onList= 1;")

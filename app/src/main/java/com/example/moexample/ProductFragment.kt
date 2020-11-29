@@ -21,7 +21,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.moexample.ProductFragment.Companion.kategories
-import com.example.moexample.ProductFragment.Companion.products
+import com.example.moexample.ProductFragment.Companion.productWithKategoryInfo
+//import com.example.moexample.ProductFragment.Companion.products
 import kotlinx.android.synthetic.main.fragment_product.*
 import kotlinx.android.synthetic.main.fragment_product.view.*
 import kotlinx.coroutines.*
@@ -130,7 +131,8 @@ class ProductFragment : Fragment() {
     }
 
     companion object {
-        lateinit var products: List<Product> //Nämä haetaan nyt tässä fragmentissa
+        //lateinit var products: List<Product> //Nämä haetaan nyt tässä fragmentissa
+        lateinit var productWithKategoryInfo : List<ProductWithKategoryInfo> //SSL 29.11.2020 added
         lateinit var kategories: List<Kategory>
         lateinit var conteksti: Context
         /* Use this factory method to create a new instance of
@@ -166,24 +168,11 @@ class ProductFragment : Fragment() {
         //Run query in separate thread, use Coroutines
         GlobalScope.launch(context = Dispatchers.Default) {
             d("debug:", " prodfrag 1")
-            //tässä vielä paikallisessa muuttujassa
-            //tätä ei välttämättä tarvita tässä fragmentissa, mutta olkoon toistaiseksi
+
             kategories = dao.getKategories()
-            products = dao.getProductsAllOrderByKategory() //käytetään tämän fragmentin products, joka on companion
-
-            /*
-            d("debug:", "3")
-            //Output to log with key "debug:"
-            kategorys.forEach {
-                d("debug:", it.k_id.toString() + ":" + it.k_name + ":" + it.k_order)
-            }
-            products.forEach {
-                d("debug:", it.p_id.toString() + ":" + it.p_name + ":" + it.k_id)
-            }
-            d("debug:", "5")
-            val tmp =products.size
-            */
-
+            //products = dao.getProductsAllOrderByKategory() //käytetään tämän fragmentin products, joka on companion
+            productWithKategoryInfo = dao.getProductsAllWithKategoryInfo()
+            d("debug:", " prodfrag 2")
         }
     }
 
@@ -198,12 +187,14 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
     }
 
     //Set number of items on list
-    override fun getItemCount() = products.size //tämä fragmentin companion objectista
+    //override fun getItemCount() = products.size //tämä fragmentin companion objectista
+    override fun getItemCount() = productWithKategoryInfo.size
 
     //Fetch data object by position, and bind it with ViewHolder
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        val prods = products
+        //val prods = products
+        val prods = productWithKategoryInfo //SSL 29.11.2020
         //d("debug:", "onBindViewHolder position=$position")
         val itemProduct = prods[position]
         holder.bind(itemProduct)
@@ -216,12 +207,15 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
 
         val prodCategoryBtn: Button = itemView.findViewById(R.id.prodkategoryButton)//SSL 25.11.2020
 
-        fun bind(item: Product) {
-            val itemtext = item.p_id.toString()+":"+item.p_name+", kategoria:"+item.k_id.toString()
+        //fun bind(item: Product) { //SSL 29.11.2020 changes:
+        fun bind(item: ProductWithKategoryInfo) {
+            //val itemtext = item.p_id.toString()+":"+item.p_name+", kategoria:"+item.k_id.toString()
+            val itemtext = item.p_name + " " + item.p_amount.toString() + " " + item.p_unit
             textView.setText(itemtext);
+            prodCategoryBtn.setText(item.k_name)
 
             prodCategoryBtn.setOnClickListener {
-                prodCategoryBtn.setText("Painettu") //SSL 25.11.2020 no tänne se taitaa onnistua!
+                //prodCategoryBtn.setText("Painettu") //SSL 25.11.2020 no tänne se taitaa onnistua!
                 setKategory(item.p_id) //SSL 25.11.2020
             }
         }
@@ -260,6 +254,9 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
                 DialogInterface.OnClickListener { dialog, which ->
                     // user checked an item
                     //TODO: OTA valinta kiinni
+                    val checked = checkedItem
+                    d("debug checkedItem:", checkedItem.toString())
+
                 }) // add OK and Cancel buttons
 
             builder.setPositiveButton("OK", DialogInterface.OnClickListener { dialog, which ->

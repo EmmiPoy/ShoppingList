@@ -32,7 +32,22 @@ data class Product(
     @ColumnInfo(name="p_amount") val p_amount : Int,
     @ColumnInfo(name="p_unit")val p_unit :String
 )
-
 //P_ID INTEGER PRIMARY KEY, P_Name TEXT, P_KategoryID INTEGER, "+
 //            "P_OnList BOOLEAN, P_Amount INTEGER, P_Unit TEXT)"
+
+
+//Huom, tähän eteen ei entityä, niin ei mäppäydy tietokantatauluun teitokantaa luodessa
+//Ei mikään paras tapa, mutta...
+class ProductWithKategoryInfo(
+    val p_id : Int,
+    val p_name : String,
+    val k_id: Int,
+    val p_onList : Boolean,
+    val p_amount : Int,
+    val p_unit :String,
+    val k_name : String,
+    val k_order : Int,
+    val k_inUse : Boolean,
+    val k_image : Int
+)
 
