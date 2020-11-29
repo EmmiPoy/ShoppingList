@@ -22,7 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.moexample.ProductFragment.Companion.kategories
 import com.example.moexample.ProductFragment.Companion.productWithKategoryInfo
-//import com.example.moexample.ProductFragment.Companion.products
+import com.example.moexample.ProductFragment.Companion.products
 import kotlinx.android.synthetic.main.fragment_product.*
 import kotlinx.android.synthetic.main.fragment_product.view.*
 import kotlinx.coroutines.*
@@ -131,7 +131,7 @@ class ProductFragment : Fragment() {
     }
 
     companion object {
-        //lateinit var products: List<Product> //Nämä haetaan nyt tässä fragmentissa
+        lateinit var products: List<Product> //Nämä haetaan nyt tässä fragmentissa
         lateinit var productWithKategoryInfo : List<ProductWithKategoryInfo> //SSL 29.11.2020 added
         lateinit var kategories: List<Kategory>
         lateinit var conteksti: Context
@@ -170,7 +170,7 @@ class ProductFragment : Fragment() {
             d("debug:", " prodfrag 1")
 
             kategories = dao.getKategories()
-            //products = dao.getProductsAllOrderByKategory() //käytetään tämän fragmentin products, joka on companion
+            products = dao.getProductsAllOrderByKategory() //käytetään tämän fragmentin products, joka on companion
             productWithKategoryInfo = dao.getProductsAllWithKategoryInfo()
             d("debug:", " prodfrag 2")
         }
