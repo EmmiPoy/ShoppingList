@@ -216,16 +216,14 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
 
             prodCategoryBtn.setOnClickListener {
                 //prodCategoryBtn.setText("Painettu") //SSL 25.11.2020 no tänne se taitaa onnistua!
-                setKategory(item.p_id) //SSL 25.11.2020
+                setKategory(item.p_name ,item.p_id, item.k_id) //SSL 25.11.2020
             }
         }
 
-        private fun setKategory(prodId: Int) {
+        private fun setKategory(prodName: String, prodId: Int, currentKategory: Int) {
             //TODO("Not yet implemented")
             //Saisko tähän tehtyä dialogin, jolla käyttäjä valitsee kategorian tuottelle?
             val annettuid = prodId
-
-
 
             // setup the alert builder
             //val builder: android.app.AlertDialog.Builder = android.app.AlertDialog.Builder(context)
@@ -235,40 +233,64 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
             val builder: android.app.AlertDialog.Builder = android.app.AlertDialog.Builder(
                 ProductFragment.conteksti
             )
-            builder.setTitle("Valitse kategoria") // add a radio button list
+            builder.setTitle("Valitse kategoria tuotteelle " + prodName) // add a radio button list
 
 
-            val choises = arrayOf("Uusi","Hedelmät", "Leivät","Talous","Maidot")
-            val i=0
+            var choises = arrayOf("Uusi")
+            var choisesIds = arrayOf(0)
+
+            var i=1 //koska listalle on jo laitettu tuo "uusi"
+            var checkedItem = 0 //
             kategories.forEach {
                 //TODO Laita täältä vaihtoehdot arrayhin
+                choises +=(it.k_name)
+                choisesIds += (it.k_id)
                 d("debug:", it.k_id.toString() + ":" + it.k_name + ":" + it.k_order)
+                if (it.k_id == currentKategory){
+                    checkedItem = i
+                }
+                i++
             }
 
 
-            val checkedItem = 0 //
-
+            var userChose = -1
 
             //builder.setSingleChoiceItems(animals, checkedItem,
+            //builder.setSingleChoiceItems(choises, checkedItem,
             builder.setSingleChoiceItems(choises, checkedItem,
                 DialogInterface.OnClickListener { dialog, which ->
                     // user checked an item
-                    //TODO: OTA valinta kiinni
-                    val checked = checkedItem
-                    d("debug checkedItem:", checkedItem.toString())
+                    userChose= which
+                    d("debug checked:","userChose" + userChose.toString())
 
                 }) // add OK and Cancel buttons
 
+           // var changedKategory = 5; //TODO Vielä kovakoodattu tässä, pitäsi saada taulukosta oikea
+            var changedKategory = -1
+            if (userChose >-1) {
+                changedKategory = choisesIds[userChose]
+            }
+            d("debug :", "changedKategory" +  changedKategory.toString())
+
             builder.setPositiveButton("OK", DialogInterface.OnClickListener { dialog, which ->
                 // user clicked OK
+                if (userChose != -1 && currentKategory!=changedKategory ) {
+                    d("debug :", "Muutetaan kategoria")
+                    updateProductsKategory(prodId, changedKategory)
+                }
+                d("debug :", "checkedOK")
             })
             builder.setNegativeButton("Cancel", null) // create and show the alert dialog
 
             val dialog: android.app.AlertDialog? = builder.create() //tulikohan tästä gradleenkin rivi ?
             dialog?.show()
 
+        }
 
-
+        //SSL 29.11.2020
+        private fun updateProductsKategory(prodId: Int, changedKategory: Int) {
+            //TODO: päivitä kantaan
+            d("debug :", "updateProductsKategory" +changedKategory.toString())
         }
     }
 
