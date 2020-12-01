@@ -146,6 +146,7 @@ class ProductFragment : Fragment() {
         lateinit var applicationCO: Application   //SSL 1.12.2020
         lateinit var daoCO : ProductDatabaseDao  //SSL 1.12.2020
 
+
         /* Use this factory method to create a new instance of
         * this fragment using the provided parameters.
         *
@@ -209,17 +210,19 @@ class ProductFragment : Fragment() {
         }
 
         //1.12.2020 koitin siirtää tänne, että olis kaikkien käytettävissä, mutta en vielä saanut...
-        /*
-        fun refreshView() {
+/*
+        fun refreshViewCO() {
             //SSL 27.11.2020
             //https://stackoverflow.com/questions/20702333/refresh-fragment-at-reload
+             //Täällä olis vinkkiä, miten CO:hon voisi saada refreshin:
+            //https://stackoverflow.com/questions/51819983/kotlin-update-view-using-function-created-in-companion-object
             val ft: FragmentTransaction = fragmentManager!!.beginTransaction()
             if (Build.VERSION.SDK_INT >= 26) {
                 ft.setReorderingAllowed(false)
             }
             ft.detach(ProductFragment).attach(ProductFragment).commit()
         }
-      */
+*/
 
 
     }

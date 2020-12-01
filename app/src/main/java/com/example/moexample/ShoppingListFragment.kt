@@ -10,6 +10,7 @@ import android.widget.CheckBox
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.moexample.ShoppingListFragment.Companion.products
+import com.example.moexample.ShoppingListFragment.Companion.productsToShopWithKatInfo
 import kotlinx.android.synthetic.main.fragment_product.*
 import kotlinx.android.synthetic.main.fragment_shopping_list.*
 import kotlinx.coroutines.Dispatchers
@@ -63,7 +64,7 @@ class ShoppingListFragment : Fragment() {
 
     companion object {
         lateinit var products: List<Product> //Nämä haetaan nyt tässä fragmentissa
-
+        lateinit var productsToShopWithKatInfo: List<ProductWithKategoryInfo> //SSL 1.12.2020
         /**
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
@@ -91,31 +92,15 @@ class ShoppingListFragment : Fragment() {
         //Run query in separate thread, use Coroutines
         GlobalScope.launch(context = Dispatchers.Default) {
             d("debug:", " prodfrag 1")
-            //tässä vielä paikallisessa muuttujassa
-            //tätä ei välttämättä tarvita tässä fragmentissa, mutta olkoon toistaiseksi
-            //ProductFragment.kategories = dao.getKategories()
-            products =
-                dao.getShoppingList() //käytetään tämän fragmentin products, joka on companion
-
-            /*
-        d("debug:", "3")
-        //Output to log with key "debug:"
-        kategorys.forEach {
-            d("debug:", it.k_id.toString() + ":" + it.k_name + ":" + it.k_order)
-        }
-        products.forEach {
-            d("debug:", it.p_id.toString() + ":" + it.p_name + ":" + it.k_id)
-        }
-        d("debug:", "5")
-        val tmp =products.size
-        */
+            products =  dao.getShoppingList() //käytetään tämän fragmentin products, joka on companion
+            productsToShopWithKatInfo=dao.getShoppingListWithKategoryInfo()//1.12.2020 SSL
         }
     }
 }
 
-
+//TODO 1.2.2020 SSL nyt tuo product on luultavasti turha, kun vaihdoin sen productsToShopWithKatInfo
+//productsToShopWithKatInfo:llä saadaa tuotteet siihen järjestykseen kuin ne kategorian order-kentän mukaan ovat
 class ShopListAdapter: RecyclerView.Adapter<ShopListAdapter.ViewHolder>() {
-//class ProductAdapter: RecyclerView.Adapter<ProductAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.shoppinglist_row, parent, false)
@@ -123,18 +108,14 @@ class ShopListAdapter: RecyclerView.Adapter<ShopListAdapter.ViewHolder>() {
     }
 
     //Set number of items on list
-    //override fun getItemCount() = 100
-    override fun getItemCount() = products.size
+    //override fun getItemCount() = products.size
+    override fun getItemCount() = productsToShopWithKatInfo.size //1.12.2020 SSL
     //Fetch data object (Game) by position, and bind it with ViewHolder
 
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        //val scores = MainActivity.scores
-        val prods = products
-        //val num=scores.size
-        //val num=prods.size
-        //val game=scores[position%num]
-        //val prod=prods[position]
+        //val prods = products
+        val prods = productsToShopWithKatInfo //1.12.2020 SSL
         d("debug:", "onBindViewHolder position=$position")
         //holder.bind(prod)
         val itemProduct = prods[position]
@@ -147,7 +128,8 @@ class ShopListAdapter: RecyclerView.Adapter<ShopListAdapter.ViewHolder>() {
         private val checkBox: CheckBox = itemView.findViewById(R.id.checkBox)
         //private val button: Button = itemView.findViewById(R.id.gameButton)
         //fun bind(item: Game) {
-        fun bind(item: Product) {
+        //fun bind(item: Product) {
+        fun bind(item: ProductWithKategoryInfo) { //1.12.2020 SSL
             //button.setText(item.id.toString()+":"+item.name+":"+item.sum)
             val itemtext = item.p_name + " " + item.p_amount.toString() + "kpl"
 

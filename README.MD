@@ -1,17 +1,17 @@
 29.11.2020 Tianne:
-KATEGORIA
+**KATEGORIA
  kuvan klikkaus otettu kiinni, mutta ei vielä teee mitään
  TODO: kuvan klikkauksesta alunperin suunniteltiin, että menisi tuote sivulle niin, että kategorian tuotteet näytettäsiisn
    --> työläs? Tehtäiskö niin, että kategoriakuvan klikkauksesta pääsisikin muokkaamaan kategoria?? Kategorian nimeä, järjestystä ja kuvaa?     Poistamaan kategorian, jos siinä ei tuotteita (tai siirtämään kategorian kaikki tuotteet tooiseen kategoriaan)
  TODO:Uuden kategorian lisääminen
-TUOTE
-  Tuoterivillä mahdollsita nyt valita tuotteelle toinen kategoria, ei vielä mene kantaan (onkohan toteutus ok, aika luova ratkaisu...)
-  TODO: kategorian vaihto kantaan
+**TUOTE
+  Tuoterivillä mahdollista nyt valita tuotteelle toinen kategoria, menee kantaan
   TODO: tuotteen checkbox klikkaus
   TODO: Tuotteen muutos (nimi määrä yksikkö) ja poisto
-  TODO: layout: tuotteen lisäys ei näy kunnolla, jos tuotteita paljon, se peittää tuotteen alleen, joka puolestaan näkyy "läpi"
+  TODO: layout: tuotteen lisäys ei näy kunnolla, jos tuotteita paljon, se peittää tuotteen alleen, joka puolestaan näkyy "läpi". Kävisiköhän tähän Dialogi (kuten oli siinä eka toteutuksessa)
   TODO: refreshView ei toimi aina....
-OSTOSLISTA
+**OSTOSLISTA
+Muutettu niin, että listalle tulee tuotteet kategorian order-mukaisessa järjestyksessä
   TODO: tuotteen checkbox klikkaus päivittämään kantaan (?) vai halutaanko jokin toinen toteutus?
   TODO: pitäisikö companion objektissa oleva "product" nimetä toisin, sekottuukohan jotenkin tuotteet-sivun vastaavaan, 
     kun ostoslista kaatuili, kun koitin poistaa products companion objektia tuote-sivulta

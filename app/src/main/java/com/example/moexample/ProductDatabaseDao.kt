@@ -66,6 +66,12 @@ interface ProductDatabaseDao {
     @Query("SELECT * FROM product WHERE p_onList= 1;")
     fun getShoppingList() : List<Product>
 
+    //1.2.2020 SSL
+    @Query("SELECT p_id, p_name, p.k_id, p_onList, p_amount, p_unit, p_unit, k_name, k_order, k_inUse, k_image  " +
+            "FROM product p, kategory k where " +
+            "p.k_id = k.k_id and p_onList= 1 " +
+            "order by k_order;")
+    fun getShoppingListWithKategoryInfo() : List<ProductWithKategoryInfo>
 
 }
 
