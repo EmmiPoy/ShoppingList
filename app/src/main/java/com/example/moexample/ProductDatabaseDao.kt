@@ -1,11 +1,9 @@
 package com.example.moexample
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
+import androidx.room.*
 //import androidx.room.Insert
-import androidx.room.Query
+
 //import androidx.room.Update
 
 @Dao
@@ -19,8 +17,16 @@ interface ProductDatabaseDao {
     @Query("INSERT INTO product (p_name,k_id,p_amount,p_onList,p_unit) VALUES (:pname, :kid, :pamount, :ponlist, :punit);")
     fun insertProduct(pname: String, kid: Int, pamount:Int, ponlist:Boolean,punit:String)
 
-    //@Update
+    //1.12.2020 roomista sai valmiina tällaisen:
+    @Update
     //fun update(game: Game)
+    fun updateProduct(product: Product)
+    /*
+    //Voisi kokeilla myös queryllä, tässä query ei vielä ok
+    @Query("update product (p_name,k_id,p_amount,p_onList,p_unit) VALUES (:pname, :kid, :pamount, :ponlist, :punit);")
+    fun updateProduct(pname: String, kid: Int, pamount:Int, ponlist:Boolean,punit:String)
+    */
+
 
     @Query("SELECT * FROM product WHERE p_id=:pid;")
     fun getProduct(pid : Int) : Product?

@@ -27,7 +27,7 @@ data class Kategory(
 data class Product(
     @PrimaryKey(autoGenerate=true) val p_id : Int,
     @ColumnInfo(name="p_name") val p_name : String,
-    @ColumnInfo(name="k_id") val k_id: Int,
+    @ColumnInfo(name="k_id") var k_id: Int,
     @ColumnInfo(name="p_onList")val p_onList : Boolean,
     @ColumnInfo(name="p_amount") val p_amount : Int,
     @ColumnInfo(name="p_unit")val p_unit :String

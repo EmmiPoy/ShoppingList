@@ -3,6 +3,7 @@ package com.example.moexample
 // Sitten lisäsin layoutin: product_row, kopsasin sinne koodin game_row:sta, muutin vain buttonin nimen
 // fragment_productiin vaihdoin tekstikentän sijaan recyclerview:n, jonka kopsasin mainista, muutin van recycleriin nimen
 //KTS: https://medium.com/inside-ppl-b7/recyclerview-inside-fragment-with-android-studio-680cbed59d84
+import android.app.Application
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Build
@@ -55,6 +56,7 @@ class ProductFragment : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
+
     }
 
     override fun onCreateView(
@@ -62,6 +64,8 @@ class ProductFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
+        applicationCO = requireNotNull(this.activity).application //SSL 1.12.2020
+        daoCO = ProductDatabase.getInstance(applicationCO).productDatabaseDao //SSL 1.12.2020
         getData()
 
         //SSL 25.11.2020 Yritin tänne sitä onclickiä...väärä paikka recyclerview:n buttonille
@@ -135,6 +139,8 @@ class ProductFragment : Fragment() {
         lateinit var productWithKategoryInfo : List<ProductWithKategoryInfo> //SSL 29.11.2020 added
         lateinit var kategories: List<Kategory>
         lateinit var conteksti: Context
+        lateinit var applicationCO: Application   //SSL 1.12.2020
+        lateinit var daoCO : ProductDatabaseDao  //SSL 1.12.2020
         /* Use this factory method to create a new instance of
         * this fragment using the provided parameters.
         *
@@ -158,6 +164,31 @@ class ProductFragment : Fragment() {
             }
 */
 
+
+        //SSL 1.12.2020
+        //TODO: parametrejä pitää vielä hioa!!
+        //fun updateProductData(product : Product, pID: Int, kID:Int) {
+        fun updateProductData(pID: Int, kID:Int) {
+
+            val application = applicationCO
+            val dao = daoCO
+
+            //Run query in separate thread, use Coroutines
+            GlobalScope.launch(context = Dispatchers.Default) {
+                d("debug:", " prodfrag 1")
+                var prod = dao.getProduct(pID)
+                if (prod != null) {
+                    prod.k_id = kID
+                    dao.updateProduct(prod)
+                }
+                d("debug:", " prodfrag 2")
+            }
+
+
+        }
+
+
+
     }
 
 
@@ -175,6 +206,7 @@ class ProductFragment : Fragment() {
             d("debug:", " prodfrag 2")
         }
     }
+
 
 
 }
@@ -267,13 +299,22 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
 
            // var changedKategory = 5; //TODO Vielä kovakoodattu tässä, pitäsi saada taulukosta oikea
             var changedKategory = -1
+            //Tässä kohdassa ei toimi
+            /*
             if (userChose >-1) {
                 changedKategory = choisesIds[userChose]
             }
             d("debug :", "changedKategory" +  changedKategory.toString())
+            */
 
             builder.setPositiveButton("OK", DialogInterface.OnClickListener { dialog, which ->
                 // user clicked OK
+                //Siirsin tähän, toimisko nyt
+                if (userChose >-1) {
+                    changedKategory = choisesIds[userChose]
+                }
+                d("debug :", "changedKategory" +  changedKategory.toString())
+
                 if (userChose != -1 && currentKategory!=changedKategory ) {
                     d("debug :", "Muutetaan kategoria")
                     updateProductsKategory(prodId, changedKategory)
@@ -291,6 +332,11 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
         private fun updateProductsKategory(prodId: Int, changedKategory: Int) {
             //TODO: päivitä kantaan
             d("debug :", "updateProductsKategory" +changedKategory.toString())
+            //näin pystyisi päivittämään, pitää vaan antaa tuo
+
+
+            ProductFragment.updateProductData( prodId, changedKategory)
+
         }
     }
 
