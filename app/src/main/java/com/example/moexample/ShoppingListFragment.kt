@@ -110,14 +110,12 @@ class ShopListAdapter: RecyclerView.Adapter<ShopListAdapter.ViewHolder>() {
     //Set number of items on list
     //override fun getItemCount() = products.size
     override fun getItemCount() = productsToShopWithKatInfo.size //1.12.2020 SSL
-    //Fetch data object (Game) by position, and bind it with ViewHolder
-
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        //val prods = products
+
         val prods = productsToShopWithKatInfo //1.12.2020 SSL
         d("debug:", "onBindViewHolder position=$position")
-        //holder.bind(prod)
+
         val itemProduct = prods[position]
         holder.bind(itemProduct)
     }
@@ -126,15 +124,12 @@ class ShopListAdapter: RecyclerView.Adapter<ShopListAdapter.ViewHolder>() {
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         private val checkBox: CheckBox = itemView.findViewById(R.id.checkBox)
-        //private val button: Button = itemView.findViewById(R.id.gameButton)
-        //fun bind(item: Game) {
-        //fun bind(item: Product) {
+
         fun bind(item: ProductWithKategoryInfo) { //1.12.2020 SSL
-            //button.setText(item.id.toString()+":"+item.name+":"+item.sum)
+
             val itemtext = item.p_name + " " + item.p_amount.toString() + "kpl"
 
             checkBox.setText(itemtext);
         }
     }
 }
-

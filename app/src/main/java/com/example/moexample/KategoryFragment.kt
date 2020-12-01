@@ -143,25 +143,25 @@ class KategoryAdapter: RecyclerView.Adapter<KategoryAdapter.ViewHolder>() {
     //Show data
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-            private val imageView: ImageView = itemView.findViewById(R.id.imageView)
-            private val imageText: TextView = itemView.findViewById(R.id.imageText)
+        private val imageView: ImageView = itemView.findViewById(R.id.imageView)
+        private val imageText: TextView = itemView.findViewById(R.id.imageText)
 
-            fun bind(item: Kategory) {
+        fun bind(item: Kategory) {
 
-                val text = item.k_name
-                val image = item.k_image
+            val text = item.k_name
+            val image = item.k_image
 
-                imageView.setImageResource(image)
-                imageText.setText(text)
+            imageView.setImageResource(image)
+            imageText.setText(text)
 
-                //SSL 29.11.2020 kopsattu ProductFragmentistä:
-                imageView.setOnClickListener {
-                    //setKategoryForProductView(item)
+            //SSL 29.11.2020 kopsattu ProductFragmentistä:
+            imageView.setOnClickListener {
+                //setKategoryForProductView(item)
 
-                    //TOD: saisikohan jompaa kumpaa toimimaan..
-                    createKategoryDialog(item)
-                    //dlg()//TODO: KESKEN 1.12.2020
-                }
+                //TOD: saisikohan jompaa kumpaa toimimaan..
+                createKategoryDialog(item)
+                //dlg()//TODO: KESKEN 1.12.2020
+            }
         }
 
 
@@ -176,10 +176,8 @@ class KategoryAdapter: RecyclerView.Adapter<KategoryAdapter.ViewHolder>() {
             //val inflater = MainActivity().layoutInflater;//tämä kaataa
             //val inflater = KategoryFragment().layoutInflater //kaataa
             var inflater =frag_inflater
-
             var viewww = frag_inflater.inflate(R.layout.kategory_dialog,null)
             var view=inflater.inflate(R.layout.kategory_dialog, null) //Tämä laitoin, että saa kenttiä kiinni, mutta kaatuu
-
             // Inflate and set the layout for the dialog
             // Pass null as the parent view because its going in the dialog layout
             builder.setView(inflater.inflate(R.layout.kategory_dialog, null))
@@ -192,11 +190,9 @@ class KategoryAdapter: RecyclerView.Adapter<KategoryAdapter.ViewHolder>() {
                 .setNegativeButton("Cancel",
                     DialogInterface.OnClickListener { dialog, id ->
                         //getDialog().cancel()
-
                     })
             builder.create()
         }
-
 */
 
 //TODO: miten saa kentän/kenttien arvon??
@@ -206,7 +202,6 @@ class KategoryAdapter: RecyclerView.Adapter<KategoryAdapter.ViewHolder>() {
         LayoutInflater inflater = this.getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.alert_label_editor, null);
         dialogBuilder.setView(dialogView);
-
         EditText editText = (EditText) dialogView.findViewById(R.id.label_field);
         editText.setText("test label");
         AlertDialog alertDialog = dialogBuilder.create();
@@ -239,4 +234,3 @@ class KategoryAdapter: RecyclerView.Adapter<KategoryAdapter.ViewHolder>() {
 
 
 }
-

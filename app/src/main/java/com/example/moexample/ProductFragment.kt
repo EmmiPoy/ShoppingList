@@ -15,6 +15,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
@@ -95,7 +96,6 @@ class ProductFragment : Fragment() {
     }
 
 
-
     private fun insertDataToDatabase()
     {
         //val productId = addProductId.text
@@ -112,7 +112,7 @@ class ProductFragment : Fragment() {
                 amoutToApply="0"
             }
             //val product = Product(0, productName,3,false, Integer.parseInt(productAmount.toString()),"kg" )
-            val product = Product(0, productName, defaultKategoryId,true, Integer.parseInt(amoutToApply),"" )
+            val product = Product(0, productName, defaultKategoryId,false, Integer.parseInt(amoutToApply),"" )
             mProductViewModel.addProduct(product)
         }
     }
@@ -173,7 +173,7 @@ class ProductFragment : Fragment() {
         //SSL 1.12.2020
         //TODO: parametrejä pitää vielä hioa!!
         fun updateProductData(productToUpdate : Product) {
-        //fun updateProductData(pID: Int, kID:Int) {
+            //fun updateProductData(pID: Int, kID:Int) {
 
             val application = applicationCO
             val dao = daoCO
@@ -196,11 +196,11 @@ class ProductFragment : Fragment() {
             //TODO: null tarkistukset
             val application = applicationCO
             val dao = daoCO
-            var getprod : Product = Product(0,"",0,true,0,"")
-            
+            var getprod : Product = Product(0,"",0,false,0,"")
+
             GlobalScope.launch(context = Dispatchers.Default) {
                 //No en ymmärrä miksi vaan ei suostu tänne tulemaan, hyppää aina yli
-               var prod = dao.getProduct(pID)
+                var prod = dao.getProduct(pID)
                 if (prod != null) {
                     getprod=prod
                 }
@@ -223,8 +223,6 @@ class ProductFragment : Fragment() {
             ft.detach(ProductFragment).attach(ProductFragment).commit()
         }
 */
-
-
     }
 
 
@@ -269,16 +267,30 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
     //Show data
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         //TODO laita tänne ja layoutille lisää elementtejä ja kytke toisiinsa
-        private val textView: TextView = itemView.findViewById(R.id.checkBox2)
+        val checkBox: CheckBox = itemView.findViewById(R.id.checkBox2)
 
         val prodCategoryBtn: Button = itemView.findViewById(R.id.prodkategoryButton)//SSL 25.11.2020
 
         //fun bind(item: Product) { //SSL 29.11.2020 changes:
         fun bind(item: ProductWithKategoryInfo) {
-            //val itemtext = item.p_id.toString()+":"+item.p_name+", kategoria:"+item.k_id.toString()
+
             val itemtext = item.p_name + " " + item.p_amount.toString() + " " + item.p_unit
-            textView.setText(itemtext);
+            checkBox.setText(itemtext);
             prodCategoryBtn.setText(item.k_name)
+
+
+            //1.12 EP
+            checkBox.setOnClickListener {
+                if (checkBox.isChecked)
+                {
+                    item.p_onList = true;
+                }
+                else if (!checkBox.isChecked)
+                {
+                    item.p_onList = false;
+                }
+                updateCheckBox(item, item.p_id, item.p_onList)
+            }
 
             prodCategoryBtn.setOnClickListener {
                 //prodCategoryBtn.setText("Painettu") //SSL 25.11.2020 no tänne se taitaa onnistua!
@@ -286,6 +298,8 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
                 setKategory(item, item.p_name ,item.p_id, item.k_id) //SSL 1.12.2020 lähetetään koko item= product-tiedot
             }
         }
+
+
 
         //private fun setKategory( prodName: String, prodId: Int, currentKategory: Int) {
         private fun setKategory(prodWithKat: ProductWithKategoryInfo, prodName: String, prodId: Int, currentKategory: Int) {
@@ -333,7 +347,7 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
 
                 }) // add OK and Cancel buttons
 
-           // var changedKategory = 5; //TODO Vielä kovakoodattu tässä, pitäsi saada taulukosta oikea
+            // var changedKategory = 5; //TODO Vielä kovakoodattu tässä, pitäsi saada taulukosta oikea
             var changedKategory = -1
             //Tässä kohdassa ei toimi
             /*
@@ -375,7 +389,20 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
             //kopsataan ensin, ei onnistunut suoraan var prod=prodWithKat, koska sitten ei antanut muokata prod:tä
             var prod = Product(prodWithKat.p_id,prodWithKat.p_name,prodWithKat.k_id,prodWithKat.p_onList,prodWithKat.p_amount,prodWithKat.p_unit)
             prod.k_id = changedKategory
-                //ProductFragment.updateProductData(prodId, changedKategory)
+            //ProductFragment.updateProductData(prodId, changedKategory)
+            ProductFragment.updateProductData(prod)
+
+            //ProductFragment.refreshView() //TODO refressaus...
+
+        }
+
+        //EP 1.12 Päivittää checkboxin tilan kantaan
+            private fun updateCheckBox(prodWithKat: ProductWithKategoryInfo, prodId: Int, changedState: Boolean)
+        {
+
+            var prod = Product(prodWithKat.p_id,prodWithKat.p_name,prodWithKat.k_id,prodWithKat.p_onList,prodWithKat.p_amount,prodWithKat.p_unit)
+            prod.p_onList = changedState
+
             ProductFragment.updateProductData(prod)
 
             //ProductFragment.refreshView() //TODO refressaus...

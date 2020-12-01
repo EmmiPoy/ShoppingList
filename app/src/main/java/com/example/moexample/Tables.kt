@@ -28,7 +28,7 @@ data class Product(
     @PrimaryKey(autoGenerate=true) val p_id : Int,
     @ColumnInfo(name="p_name") val p_name : String,
     @ColumnInfo(name="k_id") var k_id: Int,
-    @ColumnInfo(name="p_onList")val p_onList : Boolean,
+    @ColumnInfo(name="p_onList") var p_onList : Boolean,
     @ColumnInfo(name="p_amount") val p_amount : Int,
     @ColumnInfo(name="p_unit")val p_unit :String
 )
@@ -42,7 +42,7 @@ class ProductWithKategoryInfo(
     val p_id : Int,
     val p_name : String,
     val k_id: Int,
-    val p_onList : Boolean,
+    var p_onList : Boolean,
     val p_amount : Int,
     val p_unit :String,
     val k_name : String,
@@ -50,4 +50,3 @@ class ProductWithKategoryInfo(
     val k_inUse : Boolean,
     val k_image : Int
 )
-

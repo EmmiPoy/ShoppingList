@@ -74,4 +74,3 @@ interface ProductDatabaseDao {
     fun getShoppingListWithKategoryInfo() : List<ProductWithKategoryInfo>
 
 }
-
