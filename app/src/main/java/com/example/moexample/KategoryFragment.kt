@@ -1,5 +1,8 @@
 package com.example.moexample
 
+import android.app.Dialog
+import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.util.Log.d
@@ -7,17 +10,24 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.moexample.KategoryFragment.Companion.frag_inflater
+import com.example.moexample.KategoryFragment.Companion.fragkate_konteksti
 import com.example.moexample.KategoryFragment.Companion.kategorys
+import com.google.android.material.internal.ContextUtils.getActivity
 import kotlinx.android.synthetic.main.fragment_kategory.*
 import kotlinx.android.synthetic.main.fragment_product.*
+import kotlinx.android.synthetic.main.kategory_dialog.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.util.zip.Inflater
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -48,6 +58,10 @@ class KategoryFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        fragkate_konteksti = this.requireContext() //1.12.2020 SSL kopsattu productista
+        val frag_inflater = inflater //1.12.2020
+
+
         getData()
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_kategory, container, false)
@@ -55,6 +69,7 @@ class KategoryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
 
         //Tämä piti siirtää on onCreatesta tänne!!!!!
         kategoryRecyclerView.apply {
@@ -65,7 +80,8 @@ class KategoryFragment : Fragment() {
 
     companion object {
         lateinit var kategorys: List<Kategory>
-
+        lateinit var fragkate_konteksti: Context //1.12.2020 SSL
+        lateinit var frag_inflater:Inflater //1.12.2020 SSL dialogia varten
         /**
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
@@ -140,18 +156,87 @@ class KategoryAdapter: RecyclerView.Adapter<KategoryAdapter.ViewHolder>() {
 
                 //SSL 29.11.2020 kopsattu ProductFragmentistä:
                 imageView.setOnClickListener {
-                    setKategoryForProductView(item.k_id)
+                    //setKategoryForProductView(item)
+
+                    //TOD: saisikohan jompaa kumpaa toimimaan..
+                    createKategoryDialog(item)
+                    //dlg()//TODO: KESKEN 1.12.2020
                 }
         }
 
-        private fun setKategoryForProductView(kId: Int) {
-            val kategorySelected = kId
-            //TODO valittu kategoria pitää välittää Products-fragmentille ja siirtyä sinne
-            //val productFragment =ProductFragment()
-            //Tai jos ei onnistu/ei ehdi, niin jos vaan päivittäisi kategorian tietoja?
-            // Esim nimeä ja järjestystä? Saisiko kuvaa vaihdettua?
 
+//TODO DIALOGI
+        //https://developer.android.com/guide/topics/ui/dialogs#DialogFragment
+        //Kohta: https://developer.android.com/guide/topics/ui/dialogs#CustomLayout
+/*
+        fun dlg(){
+            val builder = AlertDialog.Builder(fragkate_konteksti)
+            // Get the layout inflater
+           // val inflater = requireActivity().layoutInflater;//alkuperäinen
+            //val inflater = MainActivity().layoutInflater;//tämä kaataa
+            //val inflater = KategoryFragment().layoutInflater //kaataa
+            var inflater =frag_inflater
+
+            var viewww = frag_inflater.inflate(R.layout.kategory_dialog,null)
+            var view=inflater.inflate(R.layout.kategory_dialog, null) //Tämä laitoin, että saa kenttiä kiinni, mutta kaatuu
+
+            // Inflate and set the layout for the dialog
+            // Pass null as the parent view because its going in the dialog layout
+            builder.setView(inflater.inflate(R.layout.kategory_dialog, null))
+                // Add action buttons
+                .setPositiveButton("Muuta",
+                    DialogInterface.OnClickListener { dialog, id ->
+                        // sign in the user ...
+                        //val ordernro = view.kategoryorder
+                    })
+                .setNegativeButton("Cancel",
+                    DialogInterface.OnClickListener { dialog, id ->
+                        //getDialog().cancel()
+
+                    })
+            builder.create()
         }
+
+*/
+
+//TODO: miten saa kentän/kenttien arvon??
+        //  https://stackoverflow.com/questions/22655599/alertdialog-builder-with-custom-layout-and-edittext-cannot-access-view
+        /*
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.alert_label_editor, null);
+        dialogBuilder.setView(dialogView);
+
+        EditText editText = (EditText) dialogView.findViewById(R.id.label_field);
+        editText.setText("test label");
+        AlertDialog alertDialog = dialogBuilder.create();
+        alertDialog.show();
+         */
+
+        fun createKategoryDialog(kategory:Kategory){
+
+            val builder = AlertDialog.Builder(fragkate_konteksti )
+            //EditText editText = (EditText) dialogView.findViewById(R.id.kategoryorder);
+            builder.setTitle(kategory.k_name)
+            builder.setMessage("Järjestys")
+
+            builder.setView(R.layout.kategory_dialog)
+
+            builder.setNeutralButton("Muuta"){ dialog: DialogInterface?, which: Int ->
+
+            }
+            builder.setPositiveButton("Lisää"){ dialog: DialogInterface?, which: Int ->
+
+            }
+            builder.setNegativeButton("Cancel"){ dialog: DialogInterface?, which: Int ->
+
+            }
+            builder.show()
+        }
+
+
     }
+
+
 }
 
