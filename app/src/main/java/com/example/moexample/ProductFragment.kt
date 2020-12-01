@@ -82,7 +82,9 @@ class ProductFragment : Fragment() {
         return view
     }
 
-    private fun refreshView() {
+    //private fun refreshView() {
+    //TODO: Saisiko tämäkin täältä companioniin...
+    fun refreshView() {
         //SSL 27.11.2020
         //https://stackoverflow.com/questions/20702333/refresh-fragment-at-reload
         val ft: FragmentTransaction = fragmentManager!!.beginTransaction()
@@ -91,6 +93,8 @@ class ProductFragment : Fragment() {
         }
         ft.detach(this).attach(this).commit()
     }
+
+
 
     private fun insertDataToDatabase()
     {
@@ -141,6 +145,7 @@ class ProductFragment : Fragment() {
         lateinit var conteksti: Context
         lateinit var applicationCO: Application   //SSL 1.12.2020
         lateinit var daoCO : ProductDatabaseDao  //SSL 1.12.2020
+
         /* Use this factory method to create a new instance of
         * this fragment using the provided parameters.
         *
@@ -164,11 +169,10 @@ class ProductFragment : Fragment() {
             }
 */
 
-
         //SSL 1.12.2020
         //TODO: parametrejä pitää vielä hioa!!
-        //fun updateProductData(product : Product, pID: Int, kID:Int) {
-        fun updateProductData(pID: Int, kID:Int) {
+        fun updateProductData(productToUpdate : Product) {
+        //fun updateProductData(pID: Int, kID:Int) {
 
             val application = applicationCO
             val dao = daoCO
@@ -176,17 +180,46 @@ class ProductFragment : Fragment() {
             //Run query in separate thread, use Coroutines
             GlobalScope.launch(context = Dispatchers.Default) {
                 d("debug:", " prodfrag 1")
-                var prod = dao.getProduct(pID)
-                if (prod != null) {
-                    prod.k_id = kID
-                    dao.updateProduct(prod)
+                var prodOld = dao.getProduct(productToUpdate.p_id)
+                if (prodOld != null) {
+
+                    dao.updateProduct(productToUpdate)
                 }
                 d("debug:", " prodfrag 2")
             }
 
-
         }
 
+        //1.12.2020 ÄLÄ KÄYTÄ. JOSTAIN SYYSTÄ EI TOIMI
+        fun getProductByID(pID: Int): Product? {
+            //TODO: null tarkistukset
+            val application = applicationCO
+            val dao = daoCO
+            var getprod : Product = Product(0,"",0,true,0,"")
+            
+            GlobalScope.launch(context = Dispatchers.Default) {
+                //No en ymmärrä miksi vaan ei suostu tänne tulemaan, hyppää aina yli
+               var prod = dao.getProduct(pID)
+                if (prod != null) {
+                    getprod=prod
+                }
+            }
+            //No on vaikee saada palautettua jotain!! Siksi kaikki nuo pyörittelyt
+            return getprod
+        }
+
+        //1.12.2020 koitin siirtää tänne, että olis kaikkien käytettävissä, mutta en vielä saanut...
+        /*
+        fun refreshView() {
+            //SSL 27.11.2020
+            //https://stackoverflow.com/questions/20702333/refresh-fragment-at-reload
+            val ft: FragmentTransaction = fragmentManager!!.beginTransaction()
+            if (Build.VERSION.SDK_INT >= 26) {
+                ft.setReorderingAllowed(false)
+            }
+            ft.detach(ProductFragment).attach(ProductFragment).commit()
+        }
+      */
 
 
     }
@@ -206,8 +239,6 @@ class ProductFragment : Fragment() {
             d("debug:", " prodfrag 2")
         }
     }
-
-
 
 }
 
@@ -248,11 +279,13 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
 
             prodCategoryBtn.setOnClickListener {
                 //prodCategoryBtn.setText("Painettu") //SSL 25.11.2020 no tänne se taitaa onnistua!
-                setKategory(item.p_name ,item.p_id, item.k_id) //SSL 25.11.2020
+                //setKategory(item.p_name ,item.p_id, item.k_id) //SSL 25.11.2020
+                setKategory(item, item.p_name ,item.p_id, item.k_id) //SSL 1.12.2020 lähetetään koko item= product-tiedot
             }
         }
 
-        private fun setKategory(prodName: String, prodId: Int, currentKategory: Int) {
+        //private fun setKategory( prodName: String, prodId: Int, currentKategory: Int) {
+        private fun setKategory(prodWithKat: ProductWithKategoryInfo, prodName: String, prodId: Int, currentKategory: Int) {
             //TODO("Not yet implemented")
             //Saisko tähän tehtyä dialogin, jolla käyttäjä valitsee kategorian tuottelle?
             val annettuid = prodId
@@ -317,7 +350,7 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
 
                 if (userChose != -1 && currentKategory!=changedKategory ) {
                     d("debug :", "Muutetaan kategoria")
-                    updateProductsKategory(prodId, changedKategory)
+                    updateProductsKategory(prodWithKat,prodId, changedKategory)
                 }
                 d("debug :", "checkedOK")
             })
@@ -328,14 +361,21 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
 
         }
 
-        //SSL 29.11.2020
-        private fun updateProductsKategory(prodId: Int, changedKategory: Int) {
+        //SSL 29.11.2020, 1.12.2020 lisätty ProductWithKategoryInfo
+        private fun updateProductsKategory(prodWithKat: ProductWithKategoryInfo, prodId: Int, changedKategory: Int) {
             //TODO: päivitä kantaan
             d("debug :", "updateProductsKategory" +changedKategory.toString())
             //näin pystyisi päivittämään, pitää vaan antaa tuo
 
 
-            ProductFragment.updateProductData( prodId, changedKategory)
+            //var prod = ProductFragment.getProductByID(prodId) //Tämä ei suostunut toimimaan, niin toin tiedot parametrissa
+            //kopsataan ensin, ei onnistunut suoraan var prod=prodWithKat, koska sitten ei antanut muokata prod:tä
+            var prod = Product(prodWithKat.p_id,prodWithKat.p_name,prodWithKat.k_id,prodWithKat.p_onList,prodWithKat.p_amount,prodWithKat.p_unit)
+            prod.k_id = changedKategory
+                //ProductFragment.updateProductData(prodId, changedKategory)
+            ProductFragment.updateProductData(prod)
+
+            //ProductFragment.refreshView() //TODO refressaus...
 
         }
     }
