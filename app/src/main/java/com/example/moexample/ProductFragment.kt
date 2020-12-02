@@ -33,6 +33,7 @@ import kotlinx.coroutines.*
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
+private const val ARG_PARAM = "id"
 
 /**
  * A simple [Fragment] subclass.
@@ -49,12 +50,16 @@ class ProductFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+    private  var param : Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
+
+            //tässä otetaan vastaan kategoriafragmentissa annettu argumentti (kategoria id)
+            param = it.getInt(ARG_PARAM)
         }
 
     }
@@ -104,7 +109,8 @@ class ProductFragment : Fragment() {
         val productAmount = addProductAmount.text
         var amoutToApply = productAmount.toString()//SSL Editable tyypin kanssa tui jotain ongelmaa, siksi tämä
 
-        val defaultKategoryId = 1 //SSL Laitetaan toistaiseksi näin SSL 29.11.2020 0->1
+        //tuotteen kategoriaId:ksi asetetaan parametrina saatu id
+        val KategoryId = param //SSL Laitetaan toistaiseksi näin SSL 29.11.2020 0->1
         //Kaatui, jos ei antanut määrää. Määrä ei pakollinen, laitetaan oletukssena 0:ksi
         //if(inputCheck(productName, productAmount)) {
         if(inputCheck(productName)) {
@@ -112,7 +118,7 @@ class ProductFragment : Fragment() {
                 amoutToApply="0"
             }
             //val product = Product(0, productName,3,false, Integer.parseInt(productAmount.toString()),"kg" )
-            val product = Product(0, productName, defaultKategoryId,true, Integer.parseInt(amoutToApply),"" )
+            val product = Product(0, productName, KategoryId,true, Integer.parseInt(amoutToApply),"" )
             mProductViewModel.addProduct(product)
         }
     }
@@ -237,7 +243,9 @@ class ProductFragment : Fragment() {
             d("debug:", " prodfrag 1")
 
             kategories = dao.getKategories()
-            products = dao.getProductsAllOrderByKategory() //käytetään tämän fragmentin products, joka on companion
+
+            //products listaan tuotteet kategoriaId:n perusteella
+            products = dao.getProductsByKategory(param) //käytetään tämän fragmentin products, joka on companion
             productWithKategoryInfo = dao.getProductsAllWithKategoryInfo()
             d("debug:", " prodfrag 2")
         }
@@ -254,13 +262,13 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
 
     //Set number of items on list
     //override fun getItemCount() = products.size //tämä fragmentin companion objectista
-    override fun getItemCount() = productWithKategoryInfo.size
+    override fun getItemCount() = products.size
 
     //Fetch data object by position, and bind it with ViewHolder
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         //val prods = products
-        val prods = productWithKategoryInfo //SSL 29.11.2020
+        val prods = products //SSL 29.11.2020
         //d("debug:", "onBindViewHolder position=$position")
         val itemProduct = prods[position]
         holder.bind(itemProduct)
@@ -274,17 +282,17 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
         val prodCategoryBtn: Button = itemView.findViewById(R.id.prodkategoryButton)//SSL 25.11.2020
 
         //fun bind(item: Product) { //SSL 29.11.2020 changes:
-        fun bind(item: ProductWithKategoryInfo) {
+        fun bind(item: Product) {
             //val itemtext = item.p_id.toString()+":"+item.p_name+", kategoria:"+item.k_id.toString()
             val itemtext = item.p_name + " " + item.p_amount.toString() + " " + item.p_unit
             textView.setText(itemtext);
-            prodCategoryBtn.setText(item.k_name)
+          //  prodCategoryBtn.setText(item.k_name)
 
-            prodCategoryBtn.setOnClickListener {
+            //prodCategoryBtn.setOnClickListener {
                 //prodCategoryBtn.setText("Painettu") //SSL 25.11.2020 no tänne se taitaa onnistua!
                 //setKategory(item.p_name ,item.p_id, item.k_id) //SSL 25.11.2020
-                setKategory(item, item.p_name ,item.p_id, item.k_id) //SSL 1.12.2020 lähetetään koko item= product-tiedot
-            }
+             //   setKategory(item, item.p_name ,item.p_id, item.k_id) //SSL 1.12.2020 lähetetään koko item= product-tiedot
+            //}
         }
 
         //private fun setKategory( prodName: String, prodId: Int, currentKategory: Int) {

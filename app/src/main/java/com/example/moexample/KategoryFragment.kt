@@ -14,6 +14,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -148,18 +149,33 @@ class KategoryAdapter: RecyclerView.Adapter<KategoryAdapter.ViewHolder>() {
 
             fun bind(item: Kategory) {
 
+                val id = item.k_id
                 val text = item.k_name
                 val image = item.k_image
+                val productFragment = ProductFragment()
+
+                //argumenttina kategorian id, joka annetaan ProductFragmentille
+                val args = Bundle()
+                args.putInt("id", id)
+
 
                 imageView.setImageResource(image)
                 imageText.setText(text)
 
                 //SSL 29.11.2020 kopsattu ProductFragmentistä:
-                imageView.setOnClickListener {
-                    //setKategoryForProductView(item)
 
-                    //TOD: saisikohan jompaa kumpaa toimimaan..
-                    createKategoryDialog(item)
+
+                imageView.setOnClickListener {
+                    // setKategoryForProductView(item)
+
+                    //tässä aukaistaan productfragment ja annetaan argumentti
+                    val activity = it.context as AppCompatActivity
+                    activity.supportFragmentManager.beginTransaction().apply {
+                        replace(R.id.fl_wrapper, productFragment)
+                        commit()
+                        //TOD: saisikohan jompaa kumpaa toimimaan..
+                    }
+                    productFragment.arguments = args
                     //dlg()//TODO: KESKEN 1.12.2020
                 }
         }
