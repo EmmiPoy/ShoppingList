@@ -13,6 +13,7 @@
         android:layout_gravity="center"
         app:cardElevation="3dp"
         android:layout_margin="4dp"
+        app:cardCornerRadius="20dp"
         app:cardUseCompatPadding="true">
 
         <LinearLayout
