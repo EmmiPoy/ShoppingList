@@ -22,22 +22,6 @@ class ProductViewModel(application: Application): AndroidViewModel(application) 
             repository.addProduct(product)
         }
     }
-/*
-    fun updateProduct(product: Product) {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.updateProduct(product)
-        }
-    }
 
-    fun deleteProduct(product: Product) {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.deleteProduct(product)
-        }
-    }
-    fun updateCheckBox(ponlist: ProductCheckBox) {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.updateCheckBox(ponlist)
-        }
-    }*/
 
 }

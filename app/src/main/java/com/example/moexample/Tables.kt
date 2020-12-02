@@ -25,12 +25,12 @@ data class Kategory(
 
 @Entity
 data class Product(
-    @PrimaryKey(autoGenerate=true) val p_id : Int,
-    @ColumnInfo(name="p_name") val p_name : String,
+    @PrimaryKey(autoGenerate=true) var p_id : Int,
+    @ColumnInfo(name="p_name") var p_name : String,
     @ColumnInfo(name="k_id") var k_id: Int,
     @ColumnInfo(name="p_onList") var p_onList : Boolean,
-    @ColumnInfo(name="p_amount") val p_amount : Int,
-    @ColumnInfo(name="p_unit")val p_unit :String
+    @ColumnInfo(name="p_amount") var p_amount : Int,
+    @ColumnInfo(name="p_unit") var p_unit :String
 )
 //P_ID INTEGER PRIMARY KEY, P_Name TEXT, P_KategoryID INTEGER, "+
 //            "P_OnList BOOLEAN, P_Amount INTEGER, P_Unit TEXT)"

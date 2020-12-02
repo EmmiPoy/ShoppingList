@@ -16,6 +16,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
@@ -191,6 +192,25 @@ class ProductFragment : Fragment() {
 
         }
 
+        //2.12.2020
+        fun deleteProductData(productToDelete : Product) {
+
+            val application = applicationCO
+            val dao = daoCO
+
+            //Run query in separate thread, use Coroutines
+            GlobalScope.launch(context = Dispatchers.Default) {
+                d("debug:", " prodfrag 1")
+                var prodOld = dao.getProduct(productToDelete.p_id)
+                if (prodOld != null) {
+
+                    dao.deleteProduct(productToDelete)
+                }
+                d("debug:", " prodfrag 2")
+            }
+
+        }
+
         //1.12.2020 ÄLÄ KÄYTÄ. JOSTAIN SYYSTÄ EI TOIMI
         fun getProductByID(pID: Int): Product? {
             //TODO: null tarkistukset
@@ -269,6 +289,8 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
         //TODO laita tänne ja layoutille lisää elementtejä ja kytke toisiinsa
         val checkBox: CheckBox = itemView.findViewById(R.id.checkBox2)
 
+        val deleteButton: ImageButton = itemView.findViewById(R.id.deleteButton)
+
         val prodCategoryBtn: Button = itemView.findViewById(R.id.prodkategoryButton)//SSL 25.11.2020
 
         //fun bind(item: Product) { //SSL 29.11.2020 changes:
@@ -290,6 +312,11 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
                     item.p_onList = false;
                 }
                 updateCheckBox(item, item.p_id, item.p_onList)
+            }
+
+            deleteButton.setOnClickListener {
+
+            deleteProduct(item, item.p_id, item.p_name, item.k_id, item.p_onList, item.p_amount, item.p_unit)
             }
 
             prodCategoryBtn.setOnClickListener {
@@ -397,7 +424,7 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
         }
 
         //EP 1.12 Päivittää checkboxin tilan kantaan
-            private fun updateCheckBox(prodWithKat: ProductWithKategoryInfo, prodId: Int, changedState: Boolean)
+        private fun updateCheckBox(prodWithKat: ProductWithKategoryInfo, prodId: Int, changedState: Boolean)
         {
 
             var prod = Product(prodWithKat.p_id,prodWithKat.p_name,prodWithKat.k_id,prodWithKat.p_onList,prodWithKat.p_amount,prodWithKat.p_unit)
@@ -406,7 +433,34 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
             ProductFragment.updateProductData(prod)
 
             //ProductFragment.refreshView() //TODO refressaus...
+        }
 
+        private fun deleteProduct(prodWithKat: ProductWithKategoryInfo, prodId: Int, prodName: String, katId: Int, checkBoxState: Boolean, prodAmount: Int, prodUnit: String)
+        {
+
+            var prod = Product(prodWithKat.p_id,prodWithKat.p_name,prodWithKat.k_id,prodWithKat.p_onList,prodWithKat.p_amount,prodWithKat.p_unit)
+
+            prod.p_id = prodId
+            prod.p_name = prodName
+            prod.k_id = katId
+            prod.p_onList = checkBoxState
+            prod.p_amount = prodAmount
+            prod.p_unit = prodUnit
+
+            ProductFragment.deleteProductData(prod)
+
+            //ProductFragment.refreshView() //TODO refressaus...
+        }
+
+        private fun updateProduct1(prodWithKat: ProductWithKategoryInfo, prodId: Int, changedState: Boolean)
+        {
+
+            var prod = Product(prodWithKat.p_id,prodWithKat.p_name,prodWithKat.k_id,prodWithKat.p_onList,prodWithKat.p_amount,prodWithKat.p_unit)
+            prod.p_onList = changedState
+
+            ProductFragment.updateProductData(prod)
+
+            //ProductFragment.refreshView() //TODO refressaus...
         }
     }
 

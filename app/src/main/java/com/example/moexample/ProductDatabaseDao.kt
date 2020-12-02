@@ -19,8 +19,11 @@ interface ProductDatabaseDao {
 
     //1.12.2020 roomista sai valmiina tällaisen:
     @Update
-    //fun update(game: Game)
     fun updateProduct(product: Product)
+
+    //2.12.2020
+    @Delete
+    fun deleteProduct(product: Product)
     /*
     //Voisi kokeilla myös queryllä, tässä query ei vielä ok
     @Query("update product (p_name,k_id,p_amount,p_onList,p_unit) VALUES (:pname, :kid, :pamount, :ponlist, :punit);")
