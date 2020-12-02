@@ -22,7 +22,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.moexample.ProductFragment.Companion.kategories
-import com.example.moexample.ProductFragment.Companion.productWithKategoryInfo
+//import com.example.moexample.ProductFragment.Companion.productWithKategoryInfo
 import com.example.moexample.ProductFragment.Companion.products
 import kotlinx.android.synthetic.main.fragment_product.*
 import kotlinx.android.synthetic.main.fragment_product.view.*
@@ -71,7 +71,7 @@ class ProductFragment : Fragment() {
 
         applicationCO = requireNotNull(this.activity).application //SSL 1.12.2020
         daoCO = ProductDatabase.getInstance(applicationCO).productDatabaseDao //SSL 1.12.2020
-        getData()
+        getData(param )
 
         //SSL 25.11.2020 Yritin tänne sitä onclickiä...väärä paikka recyclerview:n buttonille
         //mutto jos tulee tarve napille joka on recyclerin ulkopuolella, sen paikka vois olla täällä?
@@ -109,8 +109,15 @@ class ProductFragment : Fragment() {
         val productAmount = addProductAmount.text
         var amoutToApply = productAmount.toString()//SSL Editable tyypin kanssa tui jotain ongelmaa, siksi tämä
 
+        val kategoryId : Int
         //tuotteen kategoriaId:ksi asetetaan parametrina saatu id
-        val KategoryId = param //SSL Laitetaan toistaiseksi näin SSL 29.11.2020 0->1
+        if(param != 0){
+            kategoryId = param //SSL Laitetaan toistaiseksi näin SSL 29.11.2020 0->1
+        }
+        else{
+            kategoryId = 1;
+        }
+
         //Kaatui, jos ei antanut määrää. Määrä ei pakollinen, laitetaan oletukssena 0:ksi
         //if(inputCheck(productName, productAmount)) {
         if(inputCheck(productName)) {
@@ -118,7 +125,7 @@ class ProductFragment : Fragment() {
                 amoutToApply="0"
             }
             //val product = Product(0, productName,3,false, Integer.parseInt(productAmount.toString()),"kg" )
-            val product = Product(0, productName, KategoryId,true, Integer.parseInt(amoutToApply),"" )
+            val product = Product(0, productName, kategoryId,true, Integer.parseInt(amoutToApply),"" )
             mProductViewModel.addProduct(product)
         }
     }
@@ -145,8 +152,13 @@ class ProductFragment : Fragment() {
     }
 
     companion object {
-        lateinit var products: List<Product> //Nämä haetaan nyt tässä fragmentissa
-        lateinit var productWithKategoryInfo : List<ProductWithKategoryInfo> //SSL 29.11.2020 added
+
+        lateinit var products: List<ProductWithKategoryInfo> //Nämä haetaan nyt tässä fragmentissa
+       // lateinit var productsWithKategoryInfo : List<ProductWithKategoryInfo>
+
+
+           // lateinit var products : List<ProductWithKategoryInfo>
+         //SSL 29.11.2020 added
         lateinit var kategories: List<Kategory>
         lateinit var conteksti: Context
         lateinit var applicationCO: Application   //SSL 1.12.2020
@@ -234,20 +246,26 @@ class ProductFragment : Fragment() {
     }
 
 
-    private fun getData() {
+    private fun getData(param : Int) {
         val application = requireNotNull(this.activity).application
         dao = ProductDatabase.getInstance(application).productDatabaseDao
-
+        d("debug:", param.toString())
         //Run query in separate thread, use Coroutines
         GlobalScope.launch(context = Dispatchers.Default) {
-            d("debug:", " prodfrag 1")
+            d("debug:", param.toString())
 
             kategories = dao.getKategories()
-
             //products listaan tuotteet kategoriaId:n perusteella
-            products = dao.getProductsByKategory(param) //käytetään tämän fragmentin products, joka on companion
-            productWithKategoryInfo = dao.getProductsAllWithKategoryInfo()
-            d("debug:", " prodfrag 2")
+
+            products = if(param != 0){
+                dao.getProductsWithKategoryInfoByKategory(param)
+            } else{
+                dao.getProductsAllWithKategoryInfo()
+            }
+
+             //käytetään tämän fragmentin products, joka on companion
+
+
         }
     }
 
@@ -264,8 +282,10 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
     //override fun getItemCount() = products.size //tämä fragmentin companion objectista
     override fun getItemCount() = products.size
 
+
     //Fetch data object by position, and bind it with ViewHolder
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+
 
         //val prods = products
         val prods = products //SSL 29.11.2020
@@ -282,17 +302,19 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
         val prodCategoryBtn: Button = itemView.findViewById(R.id.prodkategoryButton)//SSL 25.11.2020
 
         //fun bind(item: Product) { //SSL 29.11.2020 changes:
-        fun bind(item: Product) {
+        fun bind(item: ProductWithKategoryInfo) {
             //val itemtext = item.p_id.toString()+":"+item.p_name+", kategoria:"+item.k_id.toString()
             val itemtext = item.p_name + " " + item.p_amount.toString() + " " + item.p_unit
-            textView.setText(itemtext);
-          //  prodCategoryBtn.setText(item.k_name)
 
-            //prodCategoryBtn.setOnClickListener {
-                //prodCategoryBtn.setText("Painettu") //SSL 25.11.2020 no tänne se taitaa onnistua!
-                //setKategory(item.p_name ,item.p_id, item.k_id) //SSL 25.11.2020
-             //   setKategory(item, item.p_name ,item.p_id, item.k_id) //SSL 1.12.2020 lähetetään koko item= product-tiedot
-            //}
+            textView.setText(itemtext);
+
+            prodCategoryBtn.setText(item.k_name)
+
+            prodCategoryBtn.setOnClickListener {
+                prodCategoryBtn.setText("Painettu") //SSL 25.11.2020 no tänne se taitaa onnistua!
+               // setKategory(item, item.p_name ,item.p_id, item.k_id) //SSL 25.11.2020
+                setKategory(item, item.p_name ,item.p_id, item.k_id) //SSL 1.12.2020 lähetetään koko item= product-tiedot
+            }
         }
 
         //private fun setKategory( prodName: String, prodId: Int, currentKategory: Int) {

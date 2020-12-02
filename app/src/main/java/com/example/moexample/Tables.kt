@@ -31,7 +31,9 @@ data class Product(
     @ColumnInfo(name="p_onList")val p_onList : Boolean,
     @ColumnInfo(name="p_amount") val p_amount : Int,
     @ColumnInfo(name="p_unit")val p_unit :String
-)
+) {
+
+}
 //P_ID INTEGER PRIMARY KEY, P_Name TEXT, P_KategoryID INTEGER, "+
 //            "P_OnList BOOLEAN, P_Amount INTEGER, P_Unit TEXT)"
 
