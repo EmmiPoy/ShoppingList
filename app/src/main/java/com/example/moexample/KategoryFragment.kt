@@ -1,4 +1,6 @@
+
 package com.example.moexample
+import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
@@ -15,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.example.moexample.KategoryFragment.Companion.frag_inflater
 import com.example.moexample.KategoryFragment.Companion.fragkate_konteksti
 import com.example.moexample.KategoryFragment.Companion.kategorys
 import kotlinx.android.synthetic.main.fragment_kategory.*
