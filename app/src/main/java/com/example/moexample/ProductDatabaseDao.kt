@@ -47,10 +47,15 @@ interface ProductDatabaseDao {
     @Query("SELECT p_id, p_name, p.k_id, p_onList, p_amount, p_unit, p_unit, k_name, k_order, k_inUse, k_image  " +
             "FROM product p, kategory k where p.k_id = k.k_id " +
             "UNION SELECT p_id, p_name, p.k_id, p_onList, p_amount, p_unit, p_unit, '' as k_name, 0 as k_order, true as k_inUse, 0 as k_image  " +
-            "FROM product p where not exists (select 1 from  kategory k where p.k_id = k.k_id ) " +
+            "FROM product p where not exists (select 1 from  kategory k where p.k_id = k.k_id) " +
             "order by k_order;")
 
     fun getProductsAllWithKategoryInfo() :List<ProductWithKategoryInfo>
+
+    @Query("SELECT p_id, p_name, p.k_id, p_onList, p_amount, p_unit, p_unit, k_name, k_order, k_inUse, k_image  " +
+            "FROM product p , kategory k where p.k_id = k.k_id  and p.k_id =:kid;")
+
+    fun getProductsWithKategoryInfoByKategory(kid : Int) :List<ProductWithKategoryInfo>
 
 
     @Query("DELETE from product")
@@ -70,6 +75,8 @@ interface ProductDatabaseDao {
     fun getShoppingList() : List<Product>
 
     //1.2.2020 SSL
+
+    //Tähän listätty
     @Query("SELECT p_id, p_name, p.k_id, p_onList, p_amount, p_unit, p_unit, k_name, k_order, k_inUse, k_image  " +
             "FROM product p, kategory k where " +
             "p.k_id = k.k_id and p_onList= 1 " +
