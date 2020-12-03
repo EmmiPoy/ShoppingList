@@ -30,7 +30,8 @@ data class Product(
     @ColumnInfo(name="k_id") var k_id: Int,
     @ColumnInfo(name="p_onList") var p_onList : Boolean,
     @ColumnInfo(name="p_amount") var p_amount : Int,
-    @ColumnInfo(name="p_unit") var p_unit :String
+    @ColumnInfo(name="p_unit") var p_unit :String,
+    @ColumnInfo(name="p_collected") var p_collected :Boolean
 )
 //P_ID INTEGER PRIMARY KEY, P_Name TEXT, P_KategoryID INTEGER, "+
 //            "P_OnList BOOLEAN, P_Amount INTEGER, P_Unit TEXT)"
@@ -45,8 +46,10 @@ class ProductWithKategoryInfo(
     var p_onList : Boolean,
     val p_amount : Int,
     val p_unit :String,
+    var p_collected: Boolean,
     val k_name : String,
     val k_order : Int,
     val k_inUse : Boolean,
-    val k_image : Int
-)
+    val k_image : Int,
+
+    )

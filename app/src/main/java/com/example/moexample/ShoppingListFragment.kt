@@ -1,5 +1,7 @@
 package com.example.moexample
 
+import android.app.Application
+import android.content.Context
 import android.os.Bundle
 import android.util.Log.d
 import androidx.fragment.app.Fragment
@@ -47,6 +49,9 @@ class ShoppingListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        applicationCO1 = requireNotNull(this.activity).application //SSL 1.12.2020
+        daoCO1 =
+            ProductDatabase.getInstance(applicationCO1).productDatabaseDao //SSL 1.12.2020
         getData()
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_shopping_list, container, false)
@@ -54,6 +59,8 @@ class ShoppingListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        ProductFragment.conteksti = this.requireContext()
         //Tämä piti siirtää on onCreatesta tänne!!!!!
         shoplistRecyclerView.apply {
             layoutManager = LinearLayoutManager(activity)
@@ -65,6 +72,10 @@ class ShoppingListFragment : Fragment() {
     companion object {
         lateinit var products: List<Product> //Nämä haetaan nyt tässä fragmentissa
         lateinit var productsToShopWithKatInfo: List<ProductWithKategoryInfo> //SSL 1.12.2020
+        lateinit var conteksti: Context
+        lateinit var applicationCO1: Application   //SSL 1.12.2020
+        lateinit var daoCO1: ProductDatabaseDao  //SSL 1.12.2020
+
         /**
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
@@ -73,6 +84,8 @@ class ShoppingListFragment : Fragment() {
          * @param param2 Parameter 2.
          * @return A new instance of fragment ShoppingListFragment.
          */
+
+
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance() = ShoppingListFragment()
@@ -83,6 +96,25 @@ class ShoppingListFragment : Fragment() {
                     putString(ARG_PARAM2, param2)
                 }
             }*/
+
+        fun updateProductData(productToUpdate: Product) {
+            //fun updateProductData(pID: Int, kID:Int) {
+
+            val application = applicationCO1
+            val dao = daoCO1
+
+            //Run query in separate thread, use Coroutines
+            GlobalScope.launch(context = Dispatchers.Default) {
+                d("debug:", " prodfrag 1")
+                var prodOld = dao.getProduct(productToUpdate.p_id)
+                if (prodOld != null) {
+
+                    dao.updateProduct(productToUpdate)
+                }
+                d("debug:", " prodfrag 2")
+            }
+
+        }
     }
 
     private fun getData() {
@@ -92,44 +124,68 @@ class ShoppingListFragment : Fragment() {
         //Run query in separate thread, use Coroutines
         GlobalScope.launch(context = Dispatchers.Default) {
             d("debug:", " prodfrag 1")
-            products =  dao.getShoppingList() //käytetään tämän fragmentin products, joka on companion
-            productsToShopWithKatInfo=dao.getShoppingListWithKategoryInfo()//1.12.2020 SSL
+            products =
+                dao.getShoppingList() //käytetään tämän fragmentin products, joka on companion
+            productsToShopWithKatInfo = dao.getShoppingListWithKategoryInfo()//1.12.2020 SSL
         }
     }
-}
 
-//TODO 1.2.2020 SSL nyt tuo product on luultavasti turha, kun vaihdoin sen productsToShopWithKatInfo
+
+    //TODO 1.2.2020 SSL nyt tuo product on luultavasti turha, kun vaihdoin sen productsToShopWithKatInfo
 //productsToShopWithKatInfo:llä saadaa tuotteet siihen järjestykseen kuin ne kategorian order-kentän mukaan ovat
-class ShopListAdapter: RecyclerView.Adapter<ShopListAdapter.ViewHolder>() {
+    class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.shoppinglist_row, parent, false)
-        return ViewHolder(view)
-    }
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+            val view =
+                LayoutInflater.from(parent.context)
+                    .inflate(R.layout.shoppinglist_row, parent, false)
+            return ViewHolder(view)
+        }
 
-    //Set number of items on list
-    //override fun getItemCount() = products.size
-    override fun getItemCount() = productsToShopWithKatInfo.size //1.12.2020 SSL
+        //Set number of items on list
+        //override fun getItemCount() = products.size
+        override fun getItemCount() = productsToShopWithKatInfo.size //1.12.2020 SSL
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        val prods = productsToShopWithKatInfo //1.12.2020 SSL
-        d("debug:", "onBindViewHolder position=$position")
+            val prods = productsToShopWithKatInfo //1.12.2020 SSL
+            d("debug:", "onBindViewHolder position=$position")
 
-        val itemProduct = prods[position]
-        holder.bind(itemProduct)
-    }
+            val itemProduct = prods[position]
+            holder.bind(itemProduct)
+        }
 
-    //Show data
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        //Show data
+        class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        private val checkBox: CheckBox = itemView.findViewById(R.id.checkBox)
+            val checkBox1: CheckBox = itemView.findViewById(R.id.checkBox)
 
-        fun bind(item: ProductWithKategoryInfo) { //1.12.2020 SSL
+            fun bind(item: ProductWithKategoryInfo) { //1.12.2020 SSL
 
-            val itemtext = item.p_name + " " + item.p_amount.toString() + "kpl"
+                val itemtext = item.p_name + " " + item.p_amount.toString() + "kpl"
+                checkBox1.setText(itemtext);
 
-            checkBox.setText(itemtext);
+                //1.12 EP
+                checkBox1.setOnClickListener {
+                    if (checkBox1.isChecked) {
+                        item.p_collected = true;
+                    } else if (!checkBox1.isChecked) {
+                        item.p_collected = false;
+                    }
+                    updateCheckBoxState(item, item.p_id, item.p_collected)
+                }
+            }
+
+            private fun updateCheckBoxState(
+                prodWithKat: ProductWithKategoryInfo, prodId: Int, changedState1: Boolean) {
+                var prod = Product(prodWithKat.p_id, prodWithKat.p_name, prodWithKat.k_id, prodWithKat.p_onList, prodWithKat.p_amount, prodWithKat.p_unit, prodWithKat.p_collected)
+
+                prodWithKat.p_collected = changedState1
+
+                updateProductData(prod)
+                //ProductFragment.refreshView() //TODO refressaus...
+            }
         }
     }
 }
+

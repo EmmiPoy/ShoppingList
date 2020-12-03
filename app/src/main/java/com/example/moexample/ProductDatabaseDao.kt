@@ -44,19 +44,17 @@ interface ProductDatabaseDao {
     //SSL 29.11.2020, muutettu 1.12.2020 niin että saadaan mukaan ne tuotteet, jotka lipsahtaneet kantaan ilman kategoriamäärittelyä
     //Voisi koittaa myös käyttä left joinia, mutta pitäisi itten myös täyttää ne tyhjät tiedot
     //@Query("SELECT p_id, p_name, p.k_id, p_onList, p_amount, p_unit, p_unit, k_name, k_order, k_inUse, k_image  FROM product p, kategory k where p.k_id = k.k_id order by k_order;")
-    @Query("SELECT p_id, p_name, p.k_id, p_onList, p_amount, p_unit, p_unit, k_name, k_order, k_inUse, k_image  " +
+    @Query("SELECT p_id, p_name, p.k_id, p_onList, p_amount, p_unit, p_unit, p_collected, k_name, k_order, k_inUse, k_image  " +
             "FROM product p, kategory k where p.k_id = k.k_id " +
-            "UNION SELECT p_id, p_name, p.k_id, p_onList, p_amount, p_unit, p_unit, '' as k_name, 0 as k_order, true as k_inUse, 0 as k_image  " +
+            "UNION SELECT p_id, p_name, p.k_id, p_onList, p_amount, p_unit, p_unit, p_collected, '' as k_name, 0 as k_order, true as k_inUse, 0 as k_image  " +
             "FROM product p where not exists (select 1 from  kategory k where p.k_id = k.k_id) " +
             "order by k_order;")
 
     fun getProductsAllWithKategoryInfo() :List<ProductWithKategoryInfo>
 
-    @Query("SELECT p_id, p_name, p.k_id, p_onList, p_amount, p_unit, p_unit, k_name, k_order, k_inUse, k_image  " +
+    @Query("SELECT p_id, p_name, p.k_id, p_onList, p_amount, p_unit, p_unit, p_collected, k_name, k_order, k_inUse, k_image  " +
             "FROM product p , kategory k where p.k_id = k.k_id  and p.k_id =:kid;")
-
     fun getProductsWithKategoryInfoByKategory(kid : Int) :List<ProductWithKategoryInfo>
-
 
     @Query("DELETE from product")
     fun clearProduct()
@@ -77,10 +75,11 @@ interface ProductDatabaseDao {
     //1.2.2020 SSL
 
     //Tähän listätty
-    @Query("SELECT p_id, p_name, p.k_id, p_onList, p_amount, p_unit, p_unit, k_name, k_order, k_inUse, k_image  " +
+    @Query("SELECT p_id, p_name, p.k_id, p_onList, p_amount, p_unit, p_unit, p_collected, k_name, k_order, k_inUse, k_image  " +
             "FROM product p, kategory k where " +
             "p.k_id = k.k_id and p_onList= 1 " +
             "order by k_order;")
     fun getShoppingListWithKategoryInfo() : List<ProductWithKategoryInfo>
+
 
 }
