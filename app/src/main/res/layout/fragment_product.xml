@@ -19,8 +19,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="bottom|center|right">
+        android:layout_gravity="bottom|center|right"
+        android:background="#EFF1F1E3"
+        android:orientation="horizontal">
 
         <EditText
             android:id="@+id/addProduct"
@@ -29,28 +30,28 @@
             android:layout_gravity="bottom"
             android:hint="Tuote" />
 
-            <EditText
-                android:id="@+id/addProductAmount"
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:ems="10"
-                android:inputType="number"
-                android:hint="Määrä"/>
+        <EditText
+            android:id="@+id/addProductAmount"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:ems="10"
+            android:hint="Määrä"
+            android:inputType="number" />
 
-                <EditText
-                    android:id="@+id/unit"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
-                    android:hint="Yksikkö" />
+        <EditText
+            android:id="@+id/unit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:hint="Yksikkö" />
 
-            <Button
-                android:id="@+id/buttonAdd"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|center|right"
-                android:text="Lisää" />
+        <Button
+            android:id="@+id/buttonAdd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center|right"
+            android:text="Lisää" />
     </LinearLayout>
 
 </FrameLayout>
