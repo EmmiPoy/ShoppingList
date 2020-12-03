@@ -188,7 +188,7 @@ class KategoryAdapter() : RecyclerView.Adapter<KategoryAdapter.ViewHolder>() {
         //holder.bind(prod)
 
         val itemKategory = kateg[position]
-        holder.bind(itemKategory, position)
+        holder.bind(itemKategory)
     }
 
     //Show data
@@ -197,7 +197,7 @@ class KategoryAdapter() : RecyclerView.Adapter<KategoryAdapter.ViewHolder>() {
         private val imageView: ImageView = itemView.findViewById(R.id.imageView)
         private val imageText: TextView = itemView.findViewById(R.id.imageText)
 
-        fun bind(item: Kategory, position : Int) {
+        fun bind(item: Kategory) {
 
             val id = item.k_id
             val text = item.k_name
