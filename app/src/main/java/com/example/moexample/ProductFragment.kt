@@ -108,6 +108,7 @@ class ProductFragment : Fragment() {
 
         val productName = addProduct.text.toString()
         val productAmount = addProductAmount.text
+        val productUnit = addProductUnit.text.toString() //3.12.2020 SSL added
 
         var amoutToApply = productAmount.toString()//SSL Editable tyypin kanssa tui jotain ongelmaa, siksi tämä
 
@@ -126,7 +127,7 @@ class ProductFragment : Fragment() {
                 amoutToApply="0"
             }
             //val product = Product(0, productName,3,false, Integer.parseInt(productAmount.toString()),"kg" )
-            val product = Product(0, productName, kategoryId,false, Integer.parseInt(amoutToApply),"", false)
+            val product = Product(0, productName, kategoryId,false, Integer.parseInt(amoutToApply),productUnit, false)
             mProductViewModel.addProduct(product)
         }
     }
