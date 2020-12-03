@@ -433,7 +433,9 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
         private fun updateCheckBox(prodWithKat: ProductWithKategoryInfo, prodId: Int, changedState: Boolean)
         {
 
-            var prod = Product(prodWithKat.p_id,prodWithKat.p_name,prodWithKat.k_id,prodWithKat.p_onList,prodWithKat.p_amount,prodWithKat.p_unit, prodWithKat.p_collected)
+            //SSL 3.12.2020 Päivin logiikkaa: jos tuotesivulla klikkaillaa tuota listalle tai pois listalta, niin merkitään se silloin ei kerätyksi
+            //var prod = Product(prodWithKat.p_id,prodWithKat.p_name,prodWithKat.k_id,prodWithKat.p_onList,prodWithKat.p_amount,prodWithKat.p_unit, prodWithKat.p_collected)
+            var prod = Product(prodWithKat.p_id,prodWithKat.p_name,prodWithKat.k_id,prodWithKat.p_onList,prodWithKat.p_amount,prodWithKat.p_unit, false)
             prod.p_onList = changedState
 
             ProductFragment.updateProductData(prod)

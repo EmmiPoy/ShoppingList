@@ -54,6 +54,8 @@ Tee loput fragmentit samoin
  8.3 onCreateen botton_navigation:lle onClick Listener
 
 ------
+3.12.2020: Muutettu näkymään otsikon "recyclerview" sijaan "Ostoslista". Jos halutaan muuttaa sovelluksesta käsin, kts: https://developer.android.com/training/appbar/setting-up
+-----
 recyclerin napin klikkaus kiinni productFragmentissa
     https://developer.android.com/codelabs/kotlin-android-training-interacting-with-items#3
 
