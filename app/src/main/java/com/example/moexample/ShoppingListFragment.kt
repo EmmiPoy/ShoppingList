@@ -164,7 +164,7 @@ class ShoppingListFragment : Fragment() {
 
                 val itemtext = item.p_name + " " + item.p_amount.toString() + "kpl"
                 checkBox1.setText(itemtext);
-
+                checkBox1.isChecked = item.p_collected //SSL 3.12.2020
                 //1.12 EP
                 checkBox1.setOnClickListener {
                     if (checkBox1.isChecked) {
