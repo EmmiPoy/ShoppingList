@@ -108,6 +108,7 @@ class ProductFragment : Fragment() {
 
         val productName = addProduct.text.toString()
         val productAmount = addProductAmount.text
+
         var amoutToApply = productAmount.toString()//SSL Editable tyypin kanssa tui jotain ongelmaa, siksi tämä
 
         val kategoryId : Int //SSL Laitetaan toistaiseksi näin SSL 29.11.2020 0->1
