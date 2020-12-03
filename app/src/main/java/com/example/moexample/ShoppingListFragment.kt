@@ -162,7 +162,7 @@ class ShoppingListFragment : Fragment() {
 
             fun bind(item: ProductWithKategoryInfo) { //1.12.2020 SSL
 
-                val itemtext = item.p_name + " " + item.p_amount.toString() + "kpl"
+                val itemtext = item.p_name + " " + item.p_amount.toString() + " " + item.p_unit
                 checkBox1.setText(itemtext);
                 checkBox1.isChecked = item.p_collected //SSL 3.12.2020
                 //1.12 EP
