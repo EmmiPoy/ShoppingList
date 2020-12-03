@@ -1,6 +1,4 @@
 package com.example.moexample
-
-import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
@@ -10,24 +8,23 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.example.moexample.KategoryFragment.Companion.frag_inflater
 import com.example.moexample.KategoryFragment.Companion.fragkate_konteksti
 import com.example.moexample.KategoryFragment.Companion.kategorys
-import com.google.android.material.internal.ContextUtils.getActivity
 import kotlinx.android.synthetic.main.fragment_kategory.*
 import kotlinx.android.synthetic.main.fragment_product.*
 import kotlinx.android.synthetic.main.kategory_dialog.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.util.*
+import java.util.Collections.swap
 import java.util.zip.Inflater
 
 // TODO: Rename parameter arguments, choose names that match
@@ -46,6 +43,8 @@ class KategoryFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+
+    //private var displayList = mutableListOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,12 +76,18 @@ class KategoryFragment : Fragment() {
             layoutManager = GridLayoutManager(activity, 3)
             adapter = KategoryAdapter()
         }
+
+        val itemTouchHelper = ItemTouchHelper(simpleCallback)
+        itemTouchHelper.attachToRecyclerView(kategoryRecyclerView)
+
+
     }
 
     companion object {
         lateinit var kategorys: List<Kategory>
         lateinit var fragkate_konteksti: Context //1.12.2020 SSL
-        lateinit var frag_inflater:Inflater //1.12.2020 SSL dialogia varten
+        lateinit var frag_inflater: Inflater //1.12.2020 SSL dialogia varten
+
         /**
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
@@ -102,6 +107,20 @@ class KategoryFragment : Fragment() {
                     putString(ARG_PARAM2, param2)
                 }
             }*/
+
+        /*    fun updateKategoryData(kategoryToUpdate : Kategory){
+            val application = ProductFragment.applicationCO
+            val dao = ProductFragment.daoCO
+            GlobalScope.launch(context = Dispatchers.Default) {
+                d("debug:", " prodfrag 1")
+                var katOld = dao.getKategory(kategoryToUpdate.k_id)
+                if (katOld != null) {
+
+                    dao.updateKategory(kategoryToUpdate)
+                }
+                d("debug:", " prodfrag 2")
+            }
+        }*/
     }
 
     private fun getData() {
@@ -116,9 +135,36 @@ class KategoryFragment : Fragment() {
 
         }
     }
+
+
+
+    private var simpleCallback = object : ItemTouchHelper.SimpleCallback(
+        ItemTouchHelper.UP.or(
+            ItemTouchHelper.DOWN.or(ItemTouchHelper.LEFT.or(ItemTouchHelper.RIGHT))
+        ), 0) {
+        override fun onMove(
+            kategoryRecyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder,
+            target: RecyclerView.ViewHolder
+        ): Boolean {
+
+            val startPosition = viewHolder.adapterPosition
+            val endPosition = target.adapterPosition
+            swap(kategorys, startPosition, endPosition)
+            kategoryRecyclerView.adapter?.notifyItemMoved(startPosition, endPosition)
+            return true
+        }
+
+        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+            TODO("Not yet implemented")
+            //tähän vois lisätä toiminnon, jolla sais poistettua kategorian pyyhkäisemällä sen jommalle kummalle sivulle
+            //tosin pitäs varmaan olla sit vaan yks kategoria per rivi
+        }
+
+    }
 }
 
-class KategoryAdapter: RecyclerView.Adapter<KategoryAdapter.ViewHolder>() {
+class KategoryAdapter() : RecyclerView.Adapter<KategoryAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.kategory_row, parent, false)
@@ -137,8 +183,9 @@ class KategoryAdapter: RecyclerView.Adapter<KategoryAdapter.ViewHolder>() {
 
         d("debug:", "onBindViewHolder position=$position")
         //holder.bind(prod)
+
         val itemKategory = kateg[position]
-        holder.bind(itemKategory)
+        holder.bind(itemKategory, position)
     }
 
     //Show data
@@ -147,7 +194,7 @@ class KategoryAdapter: RecyclerView.Adapter<KategoryAdapter.ViewHolder>() {
         private val imageView: ImageView = itemView.findViewById(R.id.imageView)
         private val imageText: TextView = itemView.findViewById(R.id.imageText)
 
-        fun bind(item: Kategory) {
+        fun bind(item: Kategory, position : Int) {
 
             val id = item.k_id
             val text = item.k_name
@@ -179,6 +226,8 @@ class KategoryAdapter: RecyclerView.Adapter<KategoryAdapter.ViewHolder>() {
                 //dlg()//TODO: KESKEN 1.12.2020
             }
         }
+
+
 
 
 //TODO DIALOGI
