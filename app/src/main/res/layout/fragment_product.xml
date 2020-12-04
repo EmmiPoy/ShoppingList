@@ -20,7 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center|right"
-        android:background="#EFF1F1E3"
+        android:background="#666666"
         android:orientation="horizontal">
 
         <EditText

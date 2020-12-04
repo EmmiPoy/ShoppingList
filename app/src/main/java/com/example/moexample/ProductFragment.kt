@@ -269,11 +269,13 @@ class ProductFragment : Fragment() {
             d("debug:", " prodfrag 1")
 
             kategories = dao.getKategories()
+
             products = if(param != 0){
                 dao.getProductsWithKategoryInfoByKategory(param)
             } else{
                 dao.getProductsAllWithKategoryInfo()
             }
+            
         }
     }
 
