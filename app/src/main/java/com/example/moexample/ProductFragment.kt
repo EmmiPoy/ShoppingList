@@ -9,15 +9,14 @@ import android.content.DialogInterface
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
+import android.text.InputType
 import android.text.TextUtils
 import android.util.Log.d
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.CheckBox
-import android.widget.ImageButton
-import android.widget.TextView
+import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
@@ -319,7 +318,6 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
             checkBox.isChecked=item.p_onList;
             prodCategoryBtn.setText(item.k_name)
 
-
             //1.12 EP
             checkBox.setOnClickListener {
                 if (checkBox.isChecked) {
@@ -330,9 +328,8 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
                 updateCheckBox(item, item.p_id, item.p_onList)
             }
 
-
             updateButton.setOnClickListener {
-                updateProductsNameAndAmount(item, item.p_id, item.p_name)
+                updateProductsNameAndAmount(it, item, item.p_id, item.p_name) //5.12.2020 SSL added it-view in parameters
             }
 
             deleteButton.setOnClickListener {
@@ -437,7 +434,7 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
         private fun updateCheckBox(prodWithKat: ProductWithKategoryInfo, prodId: Int, changedState: Boolean)
         {
 
-            //SSL 3.12.2020 Päivin logiikkaa: jos tuotesivulla klikkaillaa tuota listalle tai pois listalta, niin merkitään se silloin ei kerätyksi
+            //SSL 3.12.2020 Päivitin logiikkaa: jos tuotesivulla klikkaillaa tuota listalle tai pois listalta, niin merkitään se silloin ei kerätyksi
             //var prod = Product(prodWithKat.p_id,prodWithKat.p_name,prodWithKat.k_id,prodWithKat.p_onList,prodWithKat.p_amount,prodWithKat.p_unit, prodWithKat.p_collected)
             var prod = Product(prodWithKat.p_id,prodWithKat.p_name,prodWithKat.k_id,prodWithKat.p_onList,prodWithKat.p_amount,prodWithKat.p_unit, false)
             prod.p_onList = changedState
@@ -445,8 +442,6 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
             ProductFragment.updateProductData(prod)
             //ProductFragment.refreshView() //TODO refressaus...
         }
-
-
 
         private fun deleteProduct(prodWithKat: ProductWithKategoryInfo, prodId: Int, prodName: String, katId: Int, checkBoxState: Boolean, prodAmount: Int, prodUnit: String, prodCollected: Boolean)
         {
@@ -465,9 +460,58 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
             //ProductFragment.refreshView() //TODO refressaus...
         }
 
-        //TÄMÄ EI TOIMI!! 2.12. EP
-        private fun updateProductsNameAndAmount(prodWithKat: ProductWithKategoryInfo,prodId: Int, prodName: String) {
+        //2.12. EP,  5.12.2020 SSL added parameter view and changed according to example
+        // See: https://stackoverflow.com/questions/12876624/multiple-edittext-objects-in-alertdialog
+        private fun updateProductsNameAndAmount(vi:View, prodWithKat: ProductWithKategoryInfo,prodId: Int, prodName: String) {
 
+            val ctx=vi.context
+            var dialog= AlertDialog.Builder(ctx)
+            with(dialog) {
+                //setMessage("Message here")//Tämä tulisi Titlen alapuolelle
+                setTitle("Muuta tuotetta " + prodName)
+                var pName = EditText(ctx)
+                pName.setHint("Tuote")
+                var pAmount = EditText(ctx) //TODO miten tästä integer
+                pAmount.setHint("Määrä")
+                pAmount.inputType = InputType.TYPE_CLASS_NUMBER   // android:inputType="numberSigned" //https://stackoverflow.com/questions/31357707/set-inputtype-for-an-edittext-within-an-alert-dialog
+                var pUnit = EditText(ctx)
+                pUnit.setHint("Yksikkö")
+
+                //setView(pNameNew) //Jos olisi vain yksi kenttä, voisi tehdä näin
+                // val layout = R.layout.edit_text //SSL 5.12.2020, saisiko jotenkin sen erikseen tehdyn dialogin layoutin
+                val layout = LinearLayout(ctx)
+                layout.setOrientation(LinearLayout.VERTICAL);
+
+                layout.addView(pName)
+                layout.addView(pAmount)
+                layout.addView(pUnit)
+                pName.setText(prodWithKat.p_name)
+                pAmount.setText(prodWithKat.p_amount.toString()) //Josatin syystä tämä pitää lähettää kuitenkin stringinä
+                pUnit.setText(prodWithKat.p_unit)
+
+                // Add a TextView here for the "Title" label, as noted in the comments
+                setView(layout)
+
+                setPositiveButton(
+                    "OK",
+                    DialogInterface.OnClickListener() { dialog, which ->
+                        //d("debug", "Ok button pressed")
+                        //d("debug", "input field = '${pNameNew.text}'")
+                        val pNameNew = pName.text
+                        val pAmountNew = pAmount.text
+                        val pUnitNew = pUnit.text
+                        updateProducts(prodWithKat, prodId, pNameNew.toString(),pAmountNew.toString(),pUnitNew.toString()) //TODO lisää parametrejä
+                    })
+                setNegativeButton(
+                    "Cancel",
+                    DialogInterface.OnClickListener() { dialog, which ->
+                        d("debug", "Cancel button pressed")
+                        d("debug", "input field = '${pName.text}'")
+                    })
+                dialog.show()
+            }
+
+            /*
             val builder: android.app.AlertDialog.Builder = android.app.AlertDialog.Builder(
                 ProductFragment.conteksti
             )
@@ -478,27 +522,32 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
             }
 
             builder.setPositiveButton("OK", DialogInterface.OnClickListener { dialog, which ->
-
-                var updatedName: TextView = itemView.findViewById(R.id.editName)
+                //var updatedName: TextView = itemView.findViewById(R.id.editName)
                 //var updatedAmount: Number = itemView.findViewById(R.id.editAmount)
-
-                updateProducts(prodWithKat, prodId, updatedName.getText().toString())
-
+                //updateProducts(prodWithKat, prodId, updatedName.getText().toString())
+               // var pNameNew = R.id.editName //SSL 4.12.2020
+                //var pAmountNew = R.id.editAmount //SSL 4.12.2020
+                //updateProducts(prodWithKat, prodId, pNameNew.toString())
             })
             builder.setNegativeButton("Cancel", null) // create and show the alert dialog
-
             val dialog: android.app.AlertDialog? = builder.create() //tulikohan tästä gradleenkin rivi ?
             dialog?.show()
+             */
         }
 
-        // EP 2.12.
-        private fun updateProducts(prodWithKat: ProductWithKategoryInfo, prodId: Int, changedName: String) {
-
+        // EP 2.12., 5.12.2020 SSL added fields
+        private fun updateProducts(prodWithKat: ProductWithKategoryInfo, prodId: Int, changedName: String,
+                                   changedAmount:String, changedUnit:String) {
 
             var prod = Product(prodWithKat.p_id,prodWithKat.p_name,prodWithKat.k_id,prodWithKat.p_onList,prodWithKat.p_amount,prodWithKat.p_unit, prodWithKat.p_collected)
 
             prod.p_name = changedName
-            //prod.p_amount = changedAmount
+            if (changedAmount.isNullOrEmpty()) {
+                prod.p_amount = 0}
+            else {
+                prod.p_amount = changedAmount.toInt() //TODO tämä pitäisi saada myös tyhjänä menemään
+            }
+            prod.p_unit = changedUnit
 
             ProductFragment.updateProductData(prod)
 
