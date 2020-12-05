@@ -20,6 +20,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.moexample.KategoryFragment.Companion.frag_inflater
 import com.example.moexample.KategoryFragment.Companion.fragkate_konteksti
 import com.example.moexample.KategoryFragment.Companion.kategorys
+import com.example.moexample.ProductFragment.Companion.applicationCO
+import com.example.moexample.ProductFragment.Companion.daoCO
 import kotlinx.android.synthetic.main.fragment_kategory.*
 import kotlinx.android.synthetic.main.fragment_product.*
 import kotlinx.android.synthetic.main.kategory_dialog.view.*
@@ -111,11 +113,11 @@ class KategoryFragment : Fragment() {
                 }
             }*/
 
-        /*    fun updateKategoryData(kategoryToUpdate : Kategory){
+            fun updateKategoryData(kategoryToUpdate : Kategory){
             val application = ProductFragment.applicationCO
             val dao = ProductFragment.daoCO
             GlobalScope.launch(context = Dispatchers.Default) {
-                d("debug:", " prodfrag 1")
+               // d("debug:", " prodfrag 1")
                 var katOld = dao.getKategory(kategoryToUpdate.k_id)
                 if (katOld != null) {
 
@@ -123,7 +125,9 @@ class KategoryFragment : Fragment() {
                 }
                 d("debug:", " prodfrag 2")
             }
-        }*/
+        }
+
+
     }
 
     private fun getData() {
@@ -139,25 +143,60 @@ class KategoryFragment : Fragment() {
         }
     }
 
-
-
     private var simpleCallback = object : ItemTouchHelper.SimpleCallback(
         ItemTouchHelper.UP.or(
-            ItemTouchHelper.DOWN.or(ItemTouchHelper.LEFT.or(ItemTouchHelper.RIGHT))
-        ), 0) {
+            ItemTouchHelper.DOWN.or(ItemTouchHelper.LEFT.or(ItemTouchHelper.RIGHT)))
+        , 0) {
         override fun onMove(
             kategoryRecyclerView: RecyclerView,
             viewHolder: RecyclerView.ViewHolder,
             target: RecyclerView.ViewHolder
-        ): Boolean {
 
+            ): Boolean {
             val startPosition = viewHolder.adapterPosition
             val endPosition = target.adapterPosition
+
+          d("debug:", "$startPosition $endPosition")
+
+            GlobalScope.launch(context = Dispatchers.Default) {
+                kategorys = dao.getKategories()
+                val kat1 = kategorys[startPosition]
+                kat1.k_order = endPosition + 1
+                 dao.updateKategory(kat1)
+
+                //jos liikutetaan "eteenpäin"
+                if(startPosition < endPosition){
+
+                    val start: Int = startPosition + 1
+                    val end: Int = endPosition
+                    for (i in start..end) {
+                        val kat = kategorys[i]
+                        val order = kat.k_order
+                        kat.k_order = order - 1
+                        dao.updateKategory(kat)
+                     }
+
+                }
+                //jos liikutetaan taaksepäin
+                else
+                {
+                    val start: Int = startPosition - 1
+                    val end: Int = endPosition
+                    for (i in end..start) {
+                        val kat = kategorys[i]
+                        val order = kat.k_order
+                        kat.k_order = order + 1
+                        dao.updateKategory(kat)
+                    }
+
+                }
+            }
+
+            //näitten paikasta en ole ihan varma
             swap(kategorys, startPosition, endPosition)
             kategoryRecyclerView.adapter?.notifyItemMoved(startPosition, endPosition)
             return true
         }
-
         override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
             TODO("Not yet implemented")
             //tähän vois lisätä toiminnon, jolla sais poistettua kategorian pyyhkäisemällä sen jommalle kummalle sivulle
@@ -167,17 +206,19 @@ class KategoryFragment : Fragment() {
     }
 }
 
-class KategoryAdapter() : RecyclerView.Adapter<KategoryAdapter.ViewHolder>() {
+class KategoryAdapter : RecyclerView.Adapter<KategoryAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.kategory_row, parent, false)
         return ViewHolder(view)
     }
 
+
     //Set number of items on list
     //override fun getItemCount() = 100
     override fun getItemCount() = kategorys.size
     //Fetch data object (Game) by position, and bind it with ViewHolder
+
 
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
