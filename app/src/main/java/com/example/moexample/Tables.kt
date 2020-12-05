@@ -17,7 +17,7 @@ data class Game(
 data class Kategory(
     @PrimaryKey val k_id : Int,
     @ColumnInfo(name="k_name") val k_name : String,
-    @ColumnInfo(name="k_order") val k_order : Int,
+    @ColumnInfo(name="k_order") var k_order : Int,
     @ColumnInfo(name="k_inUse")val k_inUse : Boolean,
     @ColumnInfo(name="k_image") val k_image : Int
 )

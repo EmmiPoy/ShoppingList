@@ -1,5 +1,5 @@
-package com.example.moexample
 
+package com.example.moexample
 import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
@@ -10,24 +10,26 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.moexample.KategoryFragment.Companion.frag_inflater
 import com.example.moexample.KategoryFragment.Companion.fragkate_konteksti
 import com.example.moexample.KategoryFragment.Companion.kategorys
-import com.google.android.material.internal.ContextUtils.getActivity
+import com.example.moexample.ProductFragment.Companion.applicationCO
+import com.example.moexample.ProductFragment.Companion.daoCO
 import kotlinx.android.synthetic.main.fragment_kategory.*
 import kotlinx.android.synthetic.main.fragment_product.*
 import kotlinx.android.synthetic.main.kategory_dialog.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.util.*
+import java.util.Collections.swap
 import java.util.zip.Inflater
 
 // TODO: Rename parameter arguments, choose names that match
@@ -46,6 +48,8 @@ class KategoryFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+
+    //private var displayList = mutableListOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,12 +81,18 @@ class KategoryFragment : Fragment() {
             layoutManager = GridLayoutManager(activity, 3)
             adapter = KategoryAdapter()
         }
+
+        val itemTouchHelper = ItemTouchHelper(simpleCallback)
+        itemTouchHelper.attachToRecyclerView(kategoryRecyclerView)
+
+
     }
 
     companion object {
         lateinit var kategorys: List<Kategory>
         lateinit var fragkate_konteksti: Context //1.12.2020 SSL
-        lateinit var frag_inflater:Inflater //1.12.2020 SSL dialogia varten
+        lateinit var frag_inflater: Inflater //1.12.2020 SSL dialogia varten
+
         /**
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
@@ -102,6 +112,22 @@ class KategoryFragment : Fragment() {
                     putString(ARG_PARAM2, param2)
                 }
             }*/
+
+            fun updateKategoryData(kategoryToUpdate : Kategory){
+            val application = ProductFragment.applicationCO
+            val dao = ProductFragment.daoCO
+            GlobalScope.launch(context = Dispatchers.Default) {
+               // d("debug:", " prodfrag 1")
+                var katOld = dao.getKategory(kategoryToUpdate.k_id)
+                if (katOld != null) {
+
+                    dao.updateKategory(kategoryToUpdate)
+                }
+                d("debug:", " prodfrag 2")
+            }
+        }
+
+
     }
 
     private fun getData() {
@@ -116,19 +142,83 @@ class KategoryFragment : Fragment() {
 
         }
     }
+
+    private var simpleCallback = object : ItemTouchHelper.SimpleCallback(
+        ItemTouchHelper.UP.or(
+            ItemTouchHelper.DOWN.or(ItemTouchHelper.LEFT.or(ItemTouchHelper.RIGHT)))
+        , 0) {
+        override fun onMove(
+            kategoryRecyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder,
+            target: RecyclerView.ViewHolder
+
+            ): Boolean {
+            val startPosition = viewHolder.adapterPosition
+            val endPosition = target.adapterPosition
+
+          d("debug:", "$startPosition $endPosition")
+
+            GlobalScope.launch(context = Dispatchers.Default) {
+                kategorys = dao.getKategories()
+                val kat1 = kategorys[startPosition]
+                kat1.k_order = endPosition + 1
+                 dao.updateKategory(kat1)
+
+                //jos liikutetaan "eteenpäin"
+                if(startPosition < endPosition){
+
+                    val start: Int = startPosition + 1
+                    val end: Int = endPosition
+                    for (i in start..end) {
+                        val kat = kategorys[i]
+                        val order = kat.k_order
+                        kat.k_order = order - 1
+                        dao.updateKategory(kat)
+                     }
+
+                }
+                //jos liikutetaan taaksepäin
+                else
+                {
+                    val start: Int = startPosition - 1
+                    val end: Int = endPosition
+                    for (i in end..start) {
+                        val kat = kategorys[i]
+                        val order = kat.k_order
+                        kat.k_order = order + 1
+                        dao.updateKategory(kat)
+                    }
+
+                }
+            }
+
+            //näitten paikasta en ole ihan varma
+            swap(kategorys, startPosition, endPosition)
+            kategoryRecyclerView.adapter?.notifyItemMoved(startPosition, endPosition)
+            return true
+        }
+        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+            TODO("Not yet implemented")
+            //tähän vois lisätä toiminnon, jolla sais poistettua kategorian pyyhkäisemällä sen jommalle kummalle sivulle
+            //tosin pitäs varmaan olla sit vaan yks kategoria per rivi
+        }
+
+    }
 }
 
-class KategoryAdapter: RecyclerView.Adapter<KategoryAdapter.ViewHolder>() {
+class KategoryAdapter : RecyclerView.Adapter<KategoryAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.kategory_row, parent, false)
         return ViewHolder(view)
     }
 
+
     //Set number of items on list
     //override fun getItemCount() = 100
     override fun getItemCount() = kategorys.size
     //Fetch data object (Game) by position, and bind it with ViewHolder
+
 
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -137,6 +227,7 @@ class KategoryAdapter: RecyclerView.Adapter<KategoryAdapter.ViewHolder>() {
 
         d("debug:", "onBindViewHolder position=$position")
         //holder.bind(prod)
+
         val itemKategory = kateg[position]
         holder.bind(itemKategory)
     }
@@ -179,6 +270,8 @@ class KategoryAdapter: RecyclerView.Adapter<KategoryAdapter.ViewHolder>() {
                 //dlg()//TODO: KESKEN 1.12.2020
             }
         }
+
+
 
 
 //TODO DIALOGI
