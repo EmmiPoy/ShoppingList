@@ -73,7 +73,12 @@ Miten siirtää dataa fragmentilta toiselle
 https://developer.android.com/guide/fragments/communicate
 
 
-
 Communicate with other fragments | Android Developersdeveloper.android.com › fragments
 27.4.2020 — The fragment uses the callback interface to deliver the event to the parent activity. Kotlin Java More. override fun onListItemClick ...
+
+Dialogi:
+https://developer.android.com/reference/android/app/DialogFragment
+https://devofandroid.blogspot.com/2018/04/alertdialog-with-custom-layout-kotlin.html
+Leijuva button:
+https://devofandroid.blogspot.com/2018/03/adding-floating-action-button-kotlin.html
 
