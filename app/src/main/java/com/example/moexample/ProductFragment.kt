@@ -8,6 +8,9 @@ import android.content.Context
 import android.content.DialogInterface
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Message
+import android.provider.SyncStateContract.Helpers.update
 import android.text.Editable
 import android.text.InputType
 import android.text.TextUtils
@@ -52,6 +55,8 @@ class ProductFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
     private  var param: Int = 0
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -205,6 +210,7 @@ class ProductFragment : Fragment() {
 
         }
 
+
         //2.12.2020
         fun deleteProductData(productToDelete: Product) {
 
@@ -258,7 +264,6 @@ class ProductFragment : Fragment() {
 */
     }
 
-
     private fun getData(param: Int) {
         val application = requireNotNull(this.activity).application
         dao = ProductDatabase.getInstance(application).productDatabaseDao
@@ -301,6 +306,7 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
         holder.bind(itemProduct)
     }
 
+
     //Show data
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         //TODO laita tänne ja layoutille lisää elementtejä ja kytke toisiinsa
@@ -309,13 +315,18 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
         val deleteButton: ImageButton = itemView.findViewById(R.id.deleteButton)
         val prodCategoryBtn: Button = itemView.findViewById(R.id.prodkategoryButton)//SSL 25.11.2020
 
+        //Tästä apua refressaukseen?
+        fun update(newList: List<ProductWithKategoryInfo>) {
+            products = newList
+            //notifyDataSetChanged()
+        }
         //fun bind(item: Product) { //SSL 29.11.2020 changes:
 
         fun bind(item: ProductWithKategoryInfo) {
 
             val itemtext = item.p_name + " " + item.p_amount.toString() + " " + item.p_unit
-            checkBox.setText(itemtext);
             checkBox.isChecked=item.p_onList;
+            checkBox.setText(itemtext);
             prodCategoryBtn.setText(item.k_name)
 
             //1.12 EP
@@ -337,9 +348,14 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
             }
 
             prodCategoryBtn.setOnClickListener {
+                prodCategoryBtn.setText("Painettu") //SSL 25.11.2020 no tänne se taitaa onnistua!
+                //setKategory(item.p_name ,item.p_id, item.k_id) //SSL 25.11.2020
                 setKategory(item, item.p_name ,item.p_id, item.k_id) //SSL 1.12.2020 lähetetään koko item= product-tiedot
             }
+
+
         }
+
 
         //private fun setKategory( prodName: String, prodId: Int, currentKategory: Int) {
         private fun setKategory(prodWithKat: ProductWithKategoryInfo, prodName: String, prodId: Int, currentKategory: Int) {
