@@ -1,57 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    tools:context=".ProductFragment">
-
-    <!-- TODO: Update blank fragment layout -->
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/prodRecyclerView"
-        android:layout_width="385dp"
-        android:layout_height="709dp">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#EFDDC2">
 
 
-    </androidx.recyclerview.widget.RecyclerView>
+    <FrameLayout
 
+        android:id="@+id/productFragmentFrameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="70dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:context=".ProductFragment">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/prodRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </FrameLayout>
 
     <LinearLayout
+        android:id="@+id/productFragmentLinearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center|right"
-        android:background="#4CD6F7F0"
-        android:orientation="horizontal">
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom|center"
+        android:background="#EFDDC2"
+        android:gravity="bottom"
+        android:orientation="vertical"
+        android:paddingTop="15dp"
+        android:paddingBottom="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
-        <EditText
-            android:id="@+id/addProduct"
-            android:layout_width="120dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:hint="Tuote" />
 
-        <EditText
-            android:id="@+id/addProductAmount"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:ems="10"
-            android:hint="Määrä"
-            android:inputType="number" />
-
-        <EditText
-            android:id="@+id/addProductUnit"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:hint="Yksikkö" />
+            android:layout_height="match_parent"
+            android:background="#4CD6F7F0"
+            android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/buttonAdd"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center|right"
-            android:text="Lisää" />
+            <EditText
+                android:id="@+id/addProduct"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_weight=".40"
+                android:hint="Tuote" />
+
+            <EditText
+                android:id="@+id/addProductAmount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_weight=".20"
+                android:hint="Määrä"
+                android:inputType="number" />
+
+            <EditText
+                android:id="@+id/addProductUnit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_weight=".20"
+                android:hint="Yksikkö" />
+
+            <Button
+                android:id="@+id/buttonAdd"
+                style="@style/Widget.AppCompat.Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center|right"
+                android:layout_weight=".20"
+                android:text="Lisää" />
+
+        </LinearLayout>
     </LinearLayout>
 
-</FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

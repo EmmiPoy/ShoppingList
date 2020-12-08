@@ -24,7 +24,7 @@ import kotlinx.coroutines.*
 //https://medium.com/inside-ppl-b7/recyclerview-inside-fragment-with-android-studio-680cbed59d84
 //NAVIGOINTINAPIT: KTS:https://www.youtube.com/watch?v=fODp1hZxfng
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(){
 
     //10.1 Tehdään tietokannasta hakuja
     private lateinit var database: ProductDatabase

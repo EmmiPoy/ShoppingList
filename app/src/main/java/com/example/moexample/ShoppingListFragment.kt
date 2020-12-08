@@ -2,6 +2,7 @@ package com.example.moexample
 
 import android.app.Application
 import android.content.Context
+import android.media.MediaActionSound
 import android.os.Bundle
 import android.util.Log.d
 import androidx.fragment.app.Fragment
@@ -173,6 +174,7 @@ class ShoppingListFragment : Fragment() {
                         item.p_collected = false;
                     }
                     updateCheckBoxState(item, item.p_id, item.p_collected)
+                    playBeepSound()
                 }
             }
 
@@ -184,6 +186,12 @@ class ShoppingListFragment : Fragment() {
 
                 updateProductData(prod)
                 //ProductFragment.refreshView() //TODO refressaus...
+            }
+            //Soitetaan ääni, kun klikataan checkboxeja
+            private fun playBeepSound()
+            {
+                val sound = MediaActionSound()
+                sound.play(MediaActionSound.SHUTTER_CLICK)
             }
         }
     }
