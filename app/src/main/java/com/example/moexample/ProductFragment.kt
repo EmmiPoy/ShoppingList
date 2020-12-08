@@ -348,8 +348,6 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
             }
 
             prodCategoryBtn.setOnClickListener {
-                prodCategoryBtn.setText("Painettu") //SSL 25.11.2020 no tänne se taitaa onnistua!
-                //setKategory(item.p_name ,item.p_id, item.k_id) //SSL 25.11.2020
                 setKategory(item, item.p_name ,item.p_id, item.k_id) //SSL 1.12.2020 lähetetään koko item= product-tiedot
             }
 

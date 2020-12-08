@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="4dp"
-        app:cardCornerRadius="20dp"
+        app:cardCornerRadius="10dp"
         app:cardElevation="3dp"
         app:cardUseCompatPadding="true">
 
@@ -36,6 +36,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="TextView"
+                    android:textColor="#A36F22"
                     android:textSize="18sp"
                     android:textStyle="italic|bold" />
             </LinearLayout>
