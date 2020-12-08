@@ -334,10 +334,36 @@ class KategoryAdapter : RecyclerView.Adapter<KategoryAdapter.ViewHolder>() {
                         "Cancel",
                         DialogInterface.OnClickListener() { dialog, which ->
                         })
+                    setNeutralButton(
+                        "Poista kategoria",
+                        DialogInterface.OnClickListener() { dialog, which ->
+                            d("debug", "Cancel button pressed")
+                            d("debug", "input field = '${kName.text}'")
+                            deleteKategory(item)
+                        })
+
                     dialog.show()
                 }
 
             }
+        }
+
+        private fun deleteKategory(kategoryToDelete: Kategory) {
+
+            val application = KategoryFragment.applicationKatCO
+            val dao = KategoryFragment.daoKatCO
+            GlobalScope.launch(context = Dispatchers.Default) {
+                // d("debug:", " prodfrag 1")
+                var countProds=dao.getCountProductMyKategoryId(kategoryToDelete.k_id)
+
+                d("debug:", " kategoryfrag del" + countProds.toString())
+                if (countProds == 0) {
+                    dao.deleteKategoryById(kategoryToDelete.k_id)
+                    d("debug:", " kategoryfrag delete ")
+                }
+
+            }
+
         }
 
         //SSL 8.12.2020

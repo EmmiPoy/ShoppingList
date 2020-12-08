@@ -449,19 +449,48 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
 
         //SSL 29.11.2020, 1.12.2020 lisätty ProductWithKategoryInfo
         private fun updateProductsKategory(prodWithKat: ProductWithKategoryInfo, prodId: Int, changedKategory: Int) {
-            //TODO: päivitä kantaan
+
             d("debug :", "updateProductsKategory" +changedKategory.toString())
-            //näin pystyisi päivittämään, pitää vaan antaa tuo
+            //8.12.2020 Jos tulee 0, tehdäänkin uusi kategoria
+            var newKatId=changedKategory
+            if (changedKategory==0){
+                newKatId= addNewKategory(prodWithKat, prodId, changedKategory)
+            }
 
-            //var prod = ProductFragment.getProductByID(prodId) //Tämä ei suostunut toimimaan, niin toin tiedot parametrissa
-            //kopsataan ensin, ei onnistunut suoraan var prod=prodWithKat, koska sitten ei antanut muokata prod:tä
-            var prod = Product(prodWithKat.p_id,prodWithKat.p_name,prodWithKat.k_id,prodWithKat.p_onList,prodWithKat.p_amount,prodWithKat.p_unit, prodWithKat.p_collected)
-            prod.k_id = changedKategory
-            //ProductFragment.updateProductData(prodId, changedKategory)
-            ProductFragment.updateProductData(prod)
+                //var prod = ProductFragment.getProductByID(prodId) //Tämä ei suostunut toimimaan, niin toin tiedot parametrissa
+                //kopsataan ensin, ei onnistunut suoraan var prod=prodWithKat, koska sitten ei antanut muokata prod:tä
+                var prod = Product(
+                    prodWithKat.p_id,
+                    prodWithKat.p_name,
+                    prodWithKat.k_id,
+                    prodWithKat.p_onList,
+                    prodWithKat.p_amount,
+                    prodWithKat.p_unit,
+                    prodWithKat.p_collected
+                )
+                //prod.k_id = changedKategory
+                prod.k_id = newKatId
+                //ProductFragment.updateProductData(prodId, changedKategory)
+                ProductFragment.updateProductData(prod)
 
-            //ProductFragment.refreshView() //TODO refressaus...
+                //ProductFragment.refreshView() //TODO refressaus...
+
         }
+
+        //8.12.2020 SSL added this, että ei mene kantaa tuotteita 0-kategorialla
+        private fun addNewKategory(prodWithKat: ProductWithKategoryInfo, prodId: Int, changedKategory: Int): Int {
+                //TODO kokeile tehdä uusi kategoria dialogilla. Jos ei onnistu, niin tee vakioarvoille
+
+            var addId =1 //laitetaan sekalaisten id, jos jotain meneekin pieleen
+            GlobalScope.launch(context = Dispatchers.Default) {
+                val dao = ProductFragment.daoCO
+                val maxId = dao.getMaxKategoryId()
+                dao.insertKategory(maxId + 1, "Uusi", maxId + 1, true, R.drawable.talous);
+                addId= maxId
+            }
+            return addId
+        }
+
         //EP 1.12 Päivittää checkboxin tilan kantaan
         private fun updateCheckBox(prodWithKat: ProductWithKategoryInfo, prodId: Int, changedState: Boolean)
         {

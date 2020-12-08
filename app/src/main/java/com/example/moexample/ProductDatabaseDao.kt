@@ -73,6 +73,15 @@ interface ProductDatabaseDao {
     @Query("SELECT * FROM kategory WHERE k_id=:kid;")
     fun getKategory(kid : Int) : Kategory?
 
+    //SSL 8.12.2020 added
+    @Query("SELECT max(k_id) FROM kategory;")
+    fun getMaxKategoryId() : Int
+
+    @Query("SELECT count(*) FROM product WHERE k_id=:kid;")
+    fun getCountProductMyKategoryId(kid : Int) : Int
+
+    @Query("DELETE FROM kategory WHERE k_id=:kid;")
+    fun deleteKategoryById(kid : Int) : Int
 
     @Query("INSERT INTO kategory (k_id, k_name,k_order,k_inUse, k_image) VALUES (:kid, :kname, :korder,  :kinuse, :kimage);")
     fun insertKategory(kid:Int, kname: String, korder:Int, kinuse:Boolean, kimage:Int)
