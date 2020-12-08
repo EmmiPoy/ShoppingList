@@ -6,6 +6,7 @@ package com.example.moexample
 import android.app.Application
 import android.content.Context
 import android.content.DialogInterface
+import android.media.MediaActionSound
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -85,10 +86,14 @@ class ProductFragment : Fragment() {
 
         mProductViewModel = ViewModelProvider(this).get(ProductViewModel::class.java)
 
+
+
         //val BtnAdd=view.findViewById<TextView>(R.id.buttonAdd)
         view.buttonAdd.setOnClickListener {
             insertDataToDatabase()
             refreshView()//SSL 27.11.2020
+            playBeepSound() //Äänen lisääminen, kun painetaan nappia
+
         }
         return view
     }
@@ -104,7 +109,6 @@ class ProductFragment : Fragment() {
         }
         ft.detach(this).attach(this).commit()
     }
-
 
     private fun insertDataToDatabase()
     {
@@ -141,6 +145,12 @@ class ProductFragment : Fragment() {
     }
     private fun inputCheckOriginal (productName: String, productAmount: Editable ): Boolean{
         return !(TextUtils.isEmpty(productName) && productAmount.isEmpty())
+    }
+    //Soitetaan ääni, kun klikataan lisää-nappia
+     private fun playBeepSound()
+    {
+        val sound = MediaActionSound()
+        sound.play(MediaActionSound.SHUTTER_CLICK)
     }
 
 
@@ -329,6 +339,7 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
             checkBox.setText(itemtext);
             prodCategoryBtn.setText(item.k_name)
 
+
             //1.12 EP
             checkBox.setOnClickListener {
                 if (checkBox.isChecked) {
@@ -337,22 +348,29 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
                     item.p_onList = false;
                 }
                 updateCheckBox(item, item.p_id, item.p_onList)
-            }
+                playBeepSound()
+                }
 
             updateButton.setOnClickListener {
                 updateProductsNameAndAmount(it, item, item.p_id, item.p_name) //5.12.2020 SSL added it-view in parameters
+                playBeepSound()
             }
 
             deleteButton.setOnClickListener {
                 deleteProduct(item, item.p_id, item.p_name, item.k_id, item.p_onList, item.p_amount, item.p_unit, item.p_collected)
+                playBeepSound()
             }
 
             prodCategoryBtn.setOnClickListener {
+                //prodCategoryBtn.setText("Painettu") //SSL 25.11.2020 no tänne se taitaa onnistua!
+                //setKategory(item.p_name ,item.p_id, item.k_id) //SSL 25.11.2020
                 setKategory(item, item.p_name ,item.p_id, item.k_id) //SSL 1.12.2020 lähetetään koko item= product-tiedot
+                playBeepSound()
             }
 
 
         }
+
 
 
         //private fun setKategory( prodName: String, prodId: Int, currentKategory: Int) {
@@ -424,9 +442,9 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
                 d("debug :", "checkedOK")
             })
             builder.setNegativeButton("Cancel", null) // create and show the alert dialog
-
             val dialog: android.app.AlertDialog? = builder.create() //tulikohan tästä gradleenkin rivi ?
             dialog?.show()
+
         }
 
         //SSL 29.11.2020, 1.12.2020 lisätty ProductWithKategoryInfo
@@ -567,7 +585,14 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
 
             //ProductFragment.refreshView() //TODO refressaus...
         }
+        //Soitetaan ääni, kun klikataan nappeja, checkboxeja
+         private fun playBeepSound()
+        {
+            val sound = MediaActionSound()
+            sound.play(MediaActionSound.SHUTTER_CLICK)
+        }
 
     }
+
 
 }
