@@ -3,6 +3,7 @@ package com.example.moexample
 import android.app.Application
 import android.content.Context
 import android.content.DialogInterface
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.util.Log.d
@@ -16,13 +17,17 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.moexample.KategoryFragment.Companion.kategorys
 import kotlinx.android.synthetic.main.fragment_kategory.*
+import kotlinx.android.synthetic.main.fragment_kategory.view.*
 import kotlinx.android.synthetic.main.fragment_product.*
 import kotlinx.android.synthetic.main.kategory_dialog.view.*
+import kotlinx.android.synthetic.main.kategory_row.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -66,7 +71,12 @@ class KategoryFragment : Fragment() {
         applicationKatCO = requireNotNull(this.activity).application //SSL 8.12.2020
         daoKatCO = ProductDatabase.getInstance(applicationKatCO).productDatabaseDao //SSL 8.12.2020 Kategoriafragmentille oma
 
+
         getData()
+
+        //8.12.2020 SSL saisiko tähän kuuntelijan niille painikkeille, jotak tarvitsee refressiä...
+        val view = inflater.inflate(R.layout.fragment_kategory, container, false)
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_kategory, container, false)
     }
@@ -115,22 +125,34 @@ class KategoryFragment : Fragment() {
             }*/
 
             fun updateKategoryData(kategoryToUpdate : Kategory){
-            //val application = ProductFragment.applicationCO
-            //val dao = ProductFragment.daoCO
-            //SSL 8.12.2020 vaihdoin käyttämään oman fragmentin companionObjektia
-            val application = applicationKatCO
-            val dao = daoKatCO
-            GlobalScope.launch(context = Dispatchers.Default) {
-               // d("debug:", " prodfrag 1")
-                var katOld = dao.getKategory(kategoryToUpdate.k_id)
-                if (katOld != null) {
+                //val application = ProductFragment.applicationCO
+                //val dao = ProductFragment.daoCO
+                //SSL 8.12.2020 vaihdoin käyttämään oman fragmentin companionObjektia
+                val application = applicationKatCO
+                val dao = daoKatCO
+                GlobalScope.launch(context = Dispatchers.Default) {
+                   // d("debug:", " prodfrag 1")
+                    var katOld = dao.getKategory(kategoryToUpdate.k_id)
+                    if (katOld != null) {
 
-                    dao.updateKategory(kategoryToUpdate)
+                        dao.updateKategory(kategoryToUpdate)
+                    }
+                    d("debug:", " kategoryfrag 2")
                 }
-                d("debug:", " kategoryfrag 2")
             }
-        }
 
+    }
+
+    //8.12.2020 SSL added, mutta en saa kutsuttua tätä silloin kun tarvitsisi
+    fun refreshView() {
+        //SSL 27.11.2020
+        //https://stackoverflow.com/questions/20702333/refresh-fragment-at-reload
+        //val ft: FragmentTransaction = fragmentManager.beginTransaction()
+        val ft: FragmentTransaction = getParentFragmentManager().beginTransaction()
+        if (Build.VERSION.SDK_INT >= 26) {
+            ft.setReorderingAllowed(false)
+        }
+        ft.detach(this).attach(this).commit()
     }
 
     private fun getData() {
@@ -270,7 +292,6 @@ class KategoryAdapter : RecyclerView.Adapter<KategoryAdapter.ViewHolder>() {
                     //TOD: saisikohan jompaa kumpaa toimimaan..
                 }
                 productFragment.arguments = args
-                //dlg()//TODO: KESKEN 1.12.2020
             }
 
             // 8.12.2020 SSL Added, malli ProductFragmentista
@@ -282,8 +303,8 @@ class KategoryAdapter : RecyclerView.Adapter<KategoryAdapter.ViewHolder>() {
                 val ctx=it.context
                 var dialog= AlertDialog.Builder(ctx)
                 with(dialog) {
-                    setMessage("Kategorian järjestystä voit muuttaa raahamalla kuvasta")
-                    setTitle("Muuta kategorian nimeä " + item.k_name)
+                    setMessage("Kategorioiden järjestystä voit muuttaa raahaamalla kuvasta")
+                    setTitle("Muuta kategorian \'"+ item.k_name  + "\' nimeä " )
                     var kName = EditText(ctx)
                     kName.setHint("Kategorian nimi")
 
@@ -302,6 +323,12 @@ class KategoryAdapter : RecyclerView.Adapter<KategoryAdapter.ViewHolder>() {
                         DialogInterface.OnClickListener() { dialog, which ->
                             var kNameNew = kName.text
                             updateKategory(ctx, item, kNameNew.toString())
+                            //KategoryFragment.refreshView()
+                            //val ft: FragmentTransaction = getParentFragmentManager().beginTransaction()
+                            //it.kategoryRecyclerView.adapter?.notifyDataSetChanged()//Tämä kaataa
+                            //it.kategoryRecyclerView.layoutManager.detachViewAt()//Tälle pitäs saada indeksi
+                            //it.refreshDrawableState() //Mitähän tämä tekee.. ei mitään
+                            //it.kategoryRecyclerView.layoutManager?.detachViewAt(adapterPosition)
                         })
                     setNegativeButton(
                         "Cancel",
@@ -319,22 +346,7 @@ class KategoryAdapter : RecyclerView.Adapter<KategoryAdapter.ViewHolder>() {
                 item.k_name = kname
                 KategoryFragment.updateKategoryData(item)
             }
-            /*
-            if (!kname.isNullOrEmpty()) {
-                var katUpdated = item
-                katUpdated.k_name = kname
-                val dao = ProductFragment.daoCO //TODO SSL TÄTÄ EI YLLÄ SAISI KÄYTTÄÄ NÄIN VARMAANKAAN.... ON TOISEN FRAGMENTIN CO
-                GlobalScope.launch(context = Dispatchers.Default) {
-                    var katOld = dao.getKategory(item.k_id)
-                    if (katOld != null) {
-                        dao.updateKategory(katUpdated)
-                    }
-                    //TODO näytön päivitys
-                }
-
-            }
-            */
-
+            //refreshView() ei pääse tuohon käsiksi
         }
 
     }
