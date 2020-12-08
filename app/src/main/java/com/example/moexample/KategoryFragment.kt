@@ -1,6 +1,6 @@
 
 package com.example.moexample
-import android.app.Dialog
+import android.app.Application
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
@@ -10,18 +10,16 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.example.moexample.KategoryFragment.Companion.frag_inflater
-import com.example.moexample.KategoryFragment.Companion.fragkate_konteksti
 import com.example.moexample.KategoryFragment.Companion.kategorys
-import com.example.moexample.ProductFragment.Companion.applicationCO
-import com.example.moexample.ProductFragment.Companion.daoCO
 import kotlinx.android.synthetic.main.fragment_kategory.*
 import kotlinx.android.synthetic.main.fragment_product.*
 import kotlinx.android.synthetic.main.kategory_dialog.view.*
@@ -65,7 +63,8 @@ class KategoryFragment : Fragment() {
     ): View? {
         fragkate_konteksti = this.requireContext() //1.12.2020 SSL kopsattu productista
         val frag_inflater = inflater //1.12.2020
-
+        applicationKatCO = requireNotNull(this.activity).application //SSL 8.12.2020
+        daoKatCO = ProductDatabase.getInstance(applicationKatCO).productDatabaseDao //SSL 8.12.2020 Kategoriafragmentille oma
 
         getData()
         // Inflate the layout for this fragment
@@ -93,6 +92,8 @@ class KategoryFragment : Fragment() {
         lateinit var fragkate_konteksti: Context //1.12.2020 SSL
         lateinit var frag_inflater: Inflater //1.12.2020 SSL dialogia varten
 
+        lateinit var applicationKatCO: Application   //SSL 8.12.2020
+        lateinit var daoKatCO: ProductDatabaseDao  //SSL 8.12.2020
         /**
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
@@ -114,8 +115,11 @@ class KategoryFragment : Fragment() {
             }*/
 
             fun updateKategoryData(kategoryToUpdate : Kategory){
-            val application = ProductFragment.applicationCO
-            val dao = ProductFragment.daoCO
+            //val application = ProductFragment.applicationCO
+            //val dao = ProductFragment.daoCO
+            //SSL 8.12.2020 vaihdoin käyttämään oman fragmentin companionObjektia
+            val application = applicationKatCO
+            val dao = daoKatCO
             GlobalScope.launch(context = Dispatchers.Default) {
                // d("debug:", " prodfrag 1")
                 var katOld = dao.getKategory(kategoryToUpdate.k_id)
@@ -123,10 +127,9 @@ class KategoryFragment : Fragment() {
 
                     dao.updateKategory(kategoryToUpdate)
                 }
-                d("debug:", " prodfrag 2")
+                d("debug:", " kategoryfrag 2")
             }
         }
-
 
     }
 
@@ -269,75 +272,70 @@ class KategoryAdapter : RecyclerView.Adapter<KategoryAdapter.ViewHolder>() {
                 productFragment.arguments = args
                 //dlg()//TODO: KESKEN 1.12.2020
             }
-        }
 
+            // 8.12.2020 SSL Added, malli ProductFragmentista
+            // Tämän mukaan tehty: https://stackoverflow.com/questions/12876624/multiple-edittext-objects-in-alertdialog
+            // Muita linkkejä: https://developer.android.com/guide/topics/ui/dialogs#DialogFragment
+            //Kohta: https://developer.android.com/guide/topics/ui/dialogs#CustomLayout
+            imageText.setOnClickListener{
 
+                val ctx=it.context
+                var dialog= AlertDialog.Builder(ctx)
+                with(dialog) {
+                    setMessage("Kategorian järjestystä voit muuttaa raahamalla kuvasta")
+                    setTitle("Muuta kategorian nimeä " + item.k_name)
+                    var kName = EditText(ctx)
+                    kName.setHint("Kategorian nimi")
 
+                    val layout = LinearLayout(ctx)
+                    layout.setOrientation(LinearLayout.VERTICAL);
 
-//TODO DIALOGI
-        //https://developer.android.com/guide/topics/ui/dialogs#DialogFragment
-        //Kohta: https://developer.android.com/guide/topics/ui/dialogs#CustomLayout
-/*
-        fun dlg(){
-            val builder = AlertDialog.Builder(fragkate_konteksti)
-            // Get the layout inflater
-           // val inflater = requireActivity().layoutInflater;//alkuperäinen
-            //val inflater = MainActivity().layoutInflater;//tämä kaataa
-            //val inflater = KategoryFragment().layoutInflater //kaataa
-            var inflater =frag_inflater
-            var viewww = frag_inflater.inflate(R.layout.kategory_dialog,null)
-            var view=inflater.inflate(R.layout.kategory_dialog, null) //Tämä laitoin, että saa kenttiä kiinni, mutta kaatuu
-            // Inflate and set the layout for the dialog
-            // Pass null as the parent view because its going in the dialog layout
-            builder.setView(inflater.inflate(R.layout.kategory_dialog, null))
-                // Add action buttons
-                .setPositiveButton("Muuta",
-                    DialogInterface.OnClickListener { dialog, id ->
-                        // sign in the user ...
-                        //val ordernro = view.kategoryorder
-                    })
-                .setNegativeButton("Cancel",
-                    DialogInterface.OnClickListener { dialog, id ->
-                        //getDialog().cancel()
-                    })
-            builder.create()
-        }
-*/
+                    layout.addView(kName)
 
-//TODO: miten saa kentän/kenttien arvon??
-        //  https://stackoverflow.com/questions/22655599/alertdialog-builder-with-custom-layout-and-edittext-cannot-access-view
-        /*
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-        LayoutInflater inflater = this.getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.alert_label_editor, null);
-        dialogBuilder.setView(dialogView);
-        EditText editText = (EditText) dialogView.findViewById(R.id.label_field);
-        editText.setText("test label");
-        AlertDialog alertDialog = dialogBuilder.create();
-        alertDialog.show();
-         */
+                    kName.setText(item.k_name)
 
-        fun createKategoryDialog(kategory:Kategory){
+                    // Add a TextView here for the "Title" label, as noted in the comments
+                    setView(layout)
 
-            val builder = AlertDialog.Builder(fragkate_konteksti )
-            //EditText editText = (EditText) dialogView.findViewById(R.id.kategoryorder);
-            builder.setTitle(kategory.k_name)
-            builder.setMessage("Järjestys")
-
-            builder.setView(R.layout.kategory_dialog)
-
-            builder.setNeutralButton("Muuta"){ dialog: DialogInterface?, which: Int ->
+                    setPositiveButton(
+                        "OK",
+                        DialogInterface.OnClickListener() { dialog, which ->
+                            var kNameNew = kName.text
+                            updateKategory(ctx, item, kNameNew.toString())
+                        })
+                    setNegativeButton(
+                        "Cancel",
+                        DialogInterface.OnClickListener() { dialog, which ->
+                        })
+                    dialog.show()
+                }
 
             }
-            builder.setPositiveButton("Lisää"){ dialog: DialogInterface?, which: Int ->
-
-            }
-            builder.setNegativeButton("Cancel"){ dialog: DialogInterface?, which: Int ->
-
-            }
-            builder.show()
         }
 
+        //SSL 8.12.2020
+        private fun updateKategory(ctx: Context, item: Kategory, kname: String) {
+            if (!kname.isNullOrEmpty()) {
+                item.k_name = kname
+                KategoryFragment.updateKategoryData(item)
+            }
+            /*
+            if (!kname.isNullOrEmpty()) {
+                var katUpdated = item
+                katUpdated.k_name = kname
+                val dao = ProductFragment.daoCO //TODO SSL TÄTÄ EI YLLÄ SAISI KÄYTTÄÄ NÄIN VARMAANKAAN.... ON TOISEN FRAGMENTIN CO
+                GlobalScope.launch(context = Dispatchers.Default) {
+                    var katOld = dao.getKategory(item.k_id)
+                    if (katOld != null) {
+                        dao.updateKategory(katUpdated)
+                    }
+                    //TODO näytön päivitys
+                }
+
+            }
+            */
+
+        }
 
     }
 

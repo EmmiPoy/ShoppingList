@@ -16,7 +16,7 @@ data class Game(
 @Entity
 data class Kategory(
     @PrimaryKey val k_id : Int,
-    @ColumnInfo(name="k_name") val k_name : String,
+    @ColumnInfo(name="k_name") var k_name : String,
     @ColumnInfo(name="k_order") var k_order : Int,
     @ColumnInfo(name="k_inUse")val k_inUse : Boolean,
     @ColumnInfo(name="k_image") val k_image : Int
@@ -50,6 +50,6 @@ class ProductWithKategoryInfo(
     val k_name : String,
     val k_order : Int,
     val k_inUse : Boolean,
-    val k_image : Int,
+    val k_image : Int
 
     )
