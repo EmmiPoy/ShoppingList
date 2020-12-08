@@ -85,3 +85,4 @@ https://devofandroid.blogspot.com/2018/03/adding-floating-action-button-kotlin.h
 PUNAVIHREÄ-sokeus testi: https://asada.website/webCVS/
 KUVAT: vector vai image:https://stackoverflow.com/questions/44357112/image-asset-versus-vector-asset
 KÄYTTÄJÄ VALITSEE KUVAN: https://stackoverflow.com/questions/10165302/dialog-to-pick-image-from-gallery-or-from-camera
+(JAVA) https://zaidisoft.com/android-imageview-display-image-from-gallery-or-camera/
