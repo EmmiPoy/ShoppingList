@@ -82,3 +82,4 @@ https://devofandroid.blogspot.com/2018/04/alertdialog-with-custom-layout-kotlin.
 Leijuva button:
 https://devofandroid.blogspot.com/2018/03/adding-floating-action-button-kotlin.html
 
+PUNAVIHRESY-sokeus testi: https://asada.website/webCVS/
