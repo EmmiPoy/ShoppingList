@@ -82,4 +82,6 @@ https://devofandroid.blogspot.com/2018/04/alertdialog-with-custom-layout-kotlin.
 Leijuva button:
 https://devofandroid.blogspot.com/2018/03/adding-floating-action-button-kotlin.html
 
-PUNAVIHRESY-sokeus testi: https://asada.website/webCVS/
+PUNAVIHREÄ-sokeus testi: https://asada.website/webCVS/
+KUVAT: vector vai image:https://stackoverflow.com/questions/44357112/image-asset-versus-vector-asset
+
