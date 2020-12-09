@@ -163,7 +163,7 @@ class ShoppingListFragment : Fragment() {
 
             fun bind(item: ProductWithKategoryInfo) { //1.12.2020 SSL
 
-                val itemtext = item.p_name + " " + item.p_amount.toString() + " " + item.p_unit
+                val itemtext = item.p_name + " " + item.p_amount.toString() + " " + item.p_unit + ", "+ item.k_name;
                 checkBox1.setText(itemtext);
                 checkBox1.isChecked = item.p_collected //SSL 3.12.2020
                 //1.12 EP
@@ -174,7 +174,7 @@ class ShoppingListFragment : Fragment() {
                         item.p_collected = false;
                     }
                     updateCheckBoxState(item, item.p_id, item.p_collected)
-                    playBeepSound()
+
                 }
             }
 
@@ -187,12 +187,7 @@ class ShoppingListFragment : Fragment() {
                 updateProductData(prod)
                 //ProductFragment.refreshView() //TODO refressaus...
             }
-            //Soitetaan ääni, kun klikataan checkboxeja
-            private fun playBeepSound()
-            {
-                val sound = MediaActionSound()
-                sound.play(MediaActionSound.SHUTTER_CLICK)
-            }
+
         }
     }
 }

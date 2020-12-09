@@ -365,7 +365,7 @@ class ProdAdapter(passParam: Int) : RecyclerView.Adapter<ProdAdapter.ViewHolder>
                     item.p_onList = false;
                 }
                 updateCheckBox(it, item, item.p_id, item.p_onList)
-                playBeepSound()
+
                 }
 
             updateButton.setOnClickListener {
@@ -387,8 +387,6 @@ class ProdAdapter(passParam: Int) : RecyclerView.Adapter<ProdAdapter.ViewHolder>
                 //prodCategoryBtn.setText("Painettu") //SSL 25.11.2020 no tänne se taitaa onnistua!
                 //setKategory(item.p_name ,item.p_id, item.k_id) //SSL 25.11.2020
                 setKategory(it, item, item.p_name ,item.p_id, item.k_id, param) //SSL 1.12.2020 lähetetään koko item= product-tiedot
-                playBeepSound()
-
             }
 
 
@@ -646,7 +644,7 @@ class ProdAdapter(passParam: Int) : RecyclerView.Adapter<ProdAdapter.ViewHolder>
 
             //ProductFragment.refreshView() //TODO refressaus...
         }
-        //Soitetaan ääni, kun klikataan nappeja, checkboxeja
+        //Soitetaan ääni, kun klikataan nappeja
          private fun playBeepSound()
         {
             val sound = MediaActionSound()
