@@ -9,7 +9,7 @@
  **YLEISESTI
     Sivun nimen näyttäminen yläpalkissa "Ostoslista"-sijaan  (Kategoriat, Kategorian tuotteet, Tuotteet, Ostoslista)
 ------------------------------------
-Vinkkejä refressukseen recyclerView:sta:
+9.12.2020 Vinkkejä refressaukseen recyclerView:sta:
 https://www.tutorialkart.com/kotlin-android/android-refresh-listview-example/
 https://www.youtube.com/watch?v=d00e-kvuF9k
 https://www.youtube.com/watch?v=dAcuZRmA5q4
