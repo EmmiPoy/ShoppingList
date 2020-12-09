@@ -54,11 +54,11 @@ interface ProductDatabaseDao {
      */
     @Query("SELECT p_id, p_name, p.k_id, p_onList, p_amount, p_unit, p_unit, p_collected, k_name, k_order, k_inUse, k_image  " +
             "FROM product p, kategory k where p.k_id = k.k_id " +
-            "order by p_name ASC;")
+            "order by upper(p_name) ASC;")
     fun getProductsAllWithKategoryInfo() :List<ProductWithKategoryInfo>
 
     @Query("SELECT p_id, p_name, p.k_id, p_onList, p_amount, p_unit, p_unit, p_collected, k_name, k_order, k_inUse, k_image  " +
-            "FROM product p , kategory k where p.k_id = k.k_id  and p.k_id =:kid order by p_name ASC;")
+            "FROM product p , kategory k where p.k_id = k.k_id  and p.k_id =:kid order by upper(p_name) ASC;")
     fun getProductsWithKategoryInfoByKategory(kid : Int) :List<ProductWithKategoryInfo>
 
     @Query("DELETE from product")

@@ -119,7 +119,7 @@ class ProductFragment : Fragment() {
     {
         //val productId = addProductId.text
 
-        val productName = addProduct.text.toString()
+        val productName = addProduct.text.toString().capitalize()
         val productAmount = addProductAmount.text
         val productUnit = addProductUnit.text.toString() //3.12.2020 SSL added
 
