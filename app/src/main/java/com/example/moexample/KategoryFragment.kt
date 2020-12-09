@@ -329,6 +329,7 @@ class KategoryAdapter : RecyclerView.Adapter<KategoryAdapter.ViewHolder>() {
                             //it.kategoryRecyclerView.layoutManager.detachViewAt()//Tälle pitäs saada indeksi
                             //it.refreshDrawableState() //Mitähän tämä tekee.. ei mitään
                             //it.kategoryRecyclerView.layoutManager?.detachViewAt(adapterPosition)
+                            refreshFragment(it)
                         })
                     setNegativeButton(
                         "Cancel",
@@ -340,6 +341,7 @@ class KategoryAdapter : RecyclerView.Adapter<KategoryAdapter.ViewHolder>() {
                             d("debug", "Cancel button pressed")
                             d("debug", "input field = '${kName.text}'")
                             deleteKategory(item)
+                            refreshFragment(it)
                         })
 
                     dialog.show()
@@ -364,6 +366,8 @@ class KategoryAdapter : RecyclerView.Adapter<KategoryAdapter.ViewHolder>() {
 
             }
 
+
+
         }
 
         //SSL 8.12.2020
@@ -374,6 +378,18 @@ class KategoryAdapter : RecyclerView.Adapter<KategoryAdapter.ViewHolder>() {
             }
             //refreshView() ei pääse tuohon käsiksi
         }
+
+        fun  refreshFragment(view : View){
+
+            val activity = view.context as AppCompatActivity
+            val kategoryFragment = KategoryFragment()
+            activity.supportFragmentManager.beginTransaction().apply{
+                replace(R.id.fl_wrapper, kategoryFragment)
+                commit()
+            }
+
+        }
+
 
     }
 

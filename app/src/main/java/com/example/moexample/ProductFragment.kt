@@ -93,7 +93,7 @@ class ProductFragment : Fragment() {
         //val BtnAdd=view.findViewById<TextView>(R.id.buttonAdd)
         view.buttonAdd.setOnClickListener {
             insertDataToDatabase()
-            refreshView()//SSL 27.11.2020
+         //   refreshView()//SSL 27.11.2020
             playBeepSound() //Äänen lisääminen, kun painetaan nappia
             addProduct.setText("")
             addProductAmount.setText("")
