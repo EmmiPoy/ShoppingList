@@ -9,9 +9,6 @@ import android.content.DialogInterface
 import android.media.MediaActionSound
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Message
-import android.provider.SyncStateContract.Helpers.update
 import android.text.Editable
 import android.text.InputType
 import android.text.TextUtils
@@ -21,6 +18,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
@@ -40,6 +38,10 @@ private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 private const val ARG_PARAM = "id"
 
+
+
+
+
 /**
  * A simple [Fragment] subclass.
  * Use the [ProductFragment.newInstance] factory method to
@@ -55,7 +57,7 @@ class ProductFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
-    private  var param: Int = 0
+    private var param: Int = 0
 
 
 
@@ -93,8 +95,11 @@ class ProductFragment : Fragment() {
             insertDataToDatabase()
             refreshView()//SSL 27.11.2020
             playBeepSound() //Äänen lisääminen, kun painetaan nappia
-
+            addProduct.setText("")
+            addProductAmount.setText("")
+            addProductUnit.setText("")
         }
+
         return view
     }
 
@@ -153,6 +158,10 @@ class ProductFragment : Fragment() {
         sound.play(MediaActionSound.SHUTTER_CLICK)
     }
 
+    private fun passParam(param : Int): Int {
+        return param
+    }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -162,9 +171,10 @@ class ProductFragment : Fragment() {
         //Tämä piti siirtää on onCreatesta tänne!!!!!
         prodRecyclerView.apply {
             layoutManager = LinearLayoutManager(activity)
-            adapter =ProdAdapter()
+            adapter =ProdAdapter(passParam(param))
 
         }
+
     }
 
     companion object {
@@ -174,7 +184,6 @@ class ProductFragment : Fragment() {
         lateinit var conteksti: Context
         lateinit var applicationCO: Application   //SSL 1.12.2020
         lateinit var daoCO: ProductDatabaseDao  //SSL 1.12.2020
-
 
         /* Use this factory method to create a new instance of
         * this fragment using the provided parameters.
@@ -263,21 +272,24 @@ class ProductFragment : Fragment() {
         fun refreshViewCO() {
             //SSL 27.11.2020
             //https://stackoverflow.com/questions/20702333/refresh-fragment-at-reload
-             //Täällä olis vinkkiä, miten CO:hon voisi saada refreshin:
+            //Täällä olis vinkkiä, miten CO:hon voisi saada refreshin:
             //https://stackoverflow.com/questions/51819983/kotlin-update-view-using-function-created-in-companion-object
-            val ft: FragmentTransaction = fragmentManager!!.beginTransaction()
-            if (Build.VERSION.SDK_INT >= 26) {
-                ft.setReorderingAllowed(false)
-            }
-            ft.detach(ProductFragment).attach(ProductFragment).commit()
-        }
-*/
+
+            /*  val ft: FragmentTransaction = fragmentManager!!.beginTransaction()
+              if (Build.VERSION.SDK_INT >= 26) {
+                  ft.setReorderingAllowed(false)
+              }
+              ft.detach(ProductFragment).attach(ProductFragment).commit()*/
+        }*/
+
+
     }
 
-    private fun getData(param: Int) {
+
+     fun getData(param: Int) {
         val application = requireNotNull(this.activity).application
         dao = ProductDatabase.getInstance(application).productDatabaseDao
-
+        val param = param
         //Run query in separate thread, use Coroutines
         GlobalScope.launch(context = Dispatchers.Default) {
             d("debug:", " prodfrag 1")
@@ -291,14 +303,20 @@ class ProductFragment : Fragment() {
             }
             
         }
+
     }
 
 }
 
-class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
+class ProdAdapter(passParam: Int) : RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
+
+    var param = passParam
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.product_row, parent, false)
+
         return ViewHolder(view)
+
     }
 
     //Set number of items on list
@@ -313,7 +331,7 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
         val prods = products //SSL 29.11.2020
         //d("debug:", "onBindViewHolder position=$position")
         val itemProduct = prods[position]
-        holder.bind(itemProduct)
+        holder.bind(itemProduct, param)
     }
 
 
@@ -324,7 +342,6 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
         val updateButton: ImageButton = itemView.findViewById(R.id.updateButton)
         val deleteButton: ImageButton = itemView.findViewById(R.id.deleteButton)
         val prodCategoryBtn: Button = itemView.findViewById(R.id.prodkategoryButton)//SSL 25.11.2020
-
         //Tästä apua refressaukseen?
         fun update(newList: List<ProductWithKategoryInfo>) {
             products = newList
@@ -332,7 +349,7 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
         }
         //fun bind(item: Product) { //SSL 29.11.2020 changes:
 
-        fun bind(item: ProductWithKategoryInfo) {
+        fun bind(item: ProductWithKategoryInfo, param : Int) {
 
             val itemtext = item.p_name + " " + item.p_amount.toString() + " " + item.p_unit
             checkBox.isChecked=item.p_onList;
@@ -347,25 +364,31 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
                 } else if (!checkBox.isChecked) {
                     item.p_onList = false;
                 }
-                updateCheckBox(item, item.p_id, item.p_onList)
+                updateCheckBox(it, item, item.p_id, item.p_onList)
                 playBeepSound()
                 }
 
             updateButton.setOnClickListener {
-                updateProductsNameAndAmount(it, item, item.p_id, item.p_name) //5.12.2020 SSL added it-view in parameters
+                updateProductsNameAndAmount(it, item, item.p_id, item.p_name, item.k_id, param)//5.12.2020 SSL added it-view in parameters
                 playBeepSound()
+
             }
 
             deleteButton.setOnClickListener {
                 deleteProduct(item, item.p_id, item.p_name, item.k_id, item.p_onList, item.p_amount, item.p_unit, item.p_collected)
                 playBeepSound()
+
+                refreshFragment(it, param)
+
+
             }
 
             prodCategoryBtn.setOnClickListener {
                 //prodCategoryBtn.setText("Painettu") //SSL 25.11.2020 no tänne se taitaa onnistua!
                 //setKategory(item.p_name ,item.p_id, item.k_id) //SSL 25.11.2020
-                setKategory(item, item.p_name ,item.p_id, item.k_id) //SSL 1.12.2020 lähetetään koko item= product-tiedot
+                setKategory(it, item, item.p_name ,item.p_id, item.k_id, param) //SSL 1.12.2020 lähetetään koko item= product-tiedot
                 playBeepSound()
+
             }
 
 
@@ -374,7 +397,7 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
 
 
         //private fun setKategory( prodName: String, prodId: Int, currentKategory: Int) {
-        private fun setKategory(prodWithKat: ProductWithKategoryInfo, prodName: String, prodId: Int, currentKategory: Int) {
+        private fun setKategory(vi : View, prodWithKat: ProductWithKategoryInfo, prodName: String, prodId: Int, currentKategory: Int, param : Int) {
             //TODO("Not yet implemented")
             //Saisko tähän tehtyä dialogin, jolla käyttäjä valitsee kategorian tuottelle?
             val annettuid = prodId
@@ -439,6 +462,7 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
                     d("debug :", "Muutetaan kategoria")
                     updateProductsKategory(prodWithKat,prodId, changedKategory)
                 }
+                refreshFragment(vi, param)
                 d("debug :", "checkedOK")
             })
             builder.setNegativeButton("Cancel", null) // create and show the alert dialog
@@ -492,7 +516,7 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
         }
 
         //EP 1.12 Päivittää checkboxin tilan kantaan
-        private fun updateCheckBox(prodWithKat: ProductWithKategoryInfo, prodId: Int, changedState: Boolean)
+        private fun updateCheckBox(vi : View, prodWithKat: ProductWithKategoryInfo, prodId: Int, changedState: Boolean)
         {
 
             //SSL 3.12.2020 Päivitin logiikkaa: jos tuotesivulla klikkaillaa tuota listalle tai pois listalta, niin merkitään se silloin ei kerätyksi
@@ -501,6 +525,7 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
             prod.p_onList = changedState
 
             ProductFragment.updateProductData(prod)
+
             //ProductFragment.refreshView() //TODO refressaus...
         }
 
@@ -518,12 +543,14 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
 
             ProductFragment.deleteProductData(prod)
 
+            //ProductFragment.refreshViewCO()
+
             //ProductFragment.refreshView() //TODO refressaus...
         }
 
         //2.12. EP,  5.12.2020 SSL added parameter view and changed according to example
         // See: https://stackoverflow.com/questions/12876624/multiple-edittext-objects-in-alertdialog
-        private fun updateProductsNameAndAmount(vi:View, prodWithKat: ProductWithKategoryInfo,prodId: Int, prodName: String) {
+        private fun updateProductsNameAndAmount(vi:View, prodWithKat: ProductWithKategoryInfo,prodId: Int, prodName: String, katId : Int, param : Int) {
 
             val ctx=vi.context
             var dialog= AlertDialog.Builder(ctx)
@@ -562,6 +589,7 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
                         val pAmountNew = pAmount.text
                         val pUnitNew = pUnit.text
                         updateProducts(prodWithKat, prodId, pNameNew.toString(),pAmountNew.toString(),pUnitNew.toString()) //TODO lisää parametrejä
+                        refreshFragment(vi, param)
                     })
                 setNegativeButton(
                     "Cancel",
@@ -571,6 +599,8 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
                     })
                 dialog.show()
             }
+
+
 
             /*
             val builder: android.app.AlertDialog.Builder = android.app.AlertDialog.Builder(
@@ -595,6 +625,8 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
             dialog?.show()
              */
         }
+
+
 
         // EP 2.12., 5.12.2020 SSL added fields
         private fun updateProducts(prodWithKat: ProductWithKategoryInfo, prodId: Int, changedName: String,
@@ -621,7 +653,22 @@ class ProdAdapter: RecyclerView.Adapter<ProdAdapter.ViewHolder>() {
             sound.play(MediaActionSound.SHUTTER_CLICK)
         }
 
+        fun  refreshFragment(view : View, katId : Int){
+
+            val activity = view.context as AppCompatActivity
+            val args = Bundle()
+            args.putInt("id", katId)
+
+            val productFragment = ProductFragment()
+            activity.supportFragmentManager.beginTransaction().apply{
+                replace(R.id.fl_wrapper, productFragment)
+                commit()
+            }
+            productFragment.arguments = args
+        }
+
     }
+
 
 
 }
