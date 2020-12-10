@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
+import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.moexample.ShoppingListFragment.Companion.products
@@ -160,11 +161,12 @@ class ShoppingListFragment : Fragment() {
         class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
             val checkBox1: CheckBox = itemView.findViewById(R.id.checkBox)
-
+            val prodKatName: TextView = itemView.findViewById(R.id.prodkatName) //10.12.2020
             fun bind(item: ProductWithKategoryInfo) { //1.12.2020 SSL
 
-                val itemtext = item.p_name + " " + item.p_amount.toString() + " " + item.p_unit + ", "+ item.k_name;
+                val itemtext = item.p_name + " " + item.p_amount.toString() + " " + item.p_unit
                 checkBox1.setText(itemtext);
+                prodKatName.setText(item.k_name) //10.12.2020 SSL siirsin omaan kenttäänsä
                 checkBox1.isChecked = item.p_collected //SSL 3.12.2020
                 //1.12 EP
                 checkBox1.setOnClickListener {

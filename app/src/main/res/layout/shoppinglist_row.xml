@@ -6,18 +6,36 @@
     android:layout_marginTop="3dp"
     android:background="#F6F1EB">
 
-    <CheckBox
-        android:id="@+id/checkBox"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_wide"
-        android:layout_marginTop="@dimen/margin_wide"
-        android:layout_marginEnd="@dimen/margin_wide"
-        android:text="CheckBox"
+        android:background="#F6F1EB"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.17"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <CheckBox
+            android:id="@+id/checkBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight=".80"
+            android:text="CheckBox"
+
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/prodkatName"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="10dp"
+            android:layout_weight=".20"
+            android:inputType="text"
+            android:text="Name"
+            android:textAlignment="viewEnd"
+            android:textSize="18sp" />
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
 
 
