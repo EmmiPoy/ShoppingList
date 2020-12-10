@@ -508,7 +508,7 @@ class ProdAdapter(passParam: Int) : RecyclerView.Adapter<ProdAdapter.ViewHolder>
                 val dao = ProductFragment.daoCO
                 val maxId = dao.getMaxKategoryId()
                 dao.insertKategory(maxId + 1, "Uusi", maxId + 1, true, R.drawable.talous);
-                addId= maxId
+                addId= maxId + 1 //10.12.2020 SSL tästä oli jäänyt tuo + 1 pois
             }
             return addId
         }
