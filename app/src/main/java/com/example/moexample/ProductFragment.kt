@@ -499,6 +499,8 @@ class ProdAdapter(passParam: Int) : RecyclerView.Adapter<ProdAdapter.ViewHolder>
         }
 
         //8.12.2020 SSL added this, että ei mene kantaa tuotteita 0-kategorialla
+        //Tässä on varmaan joku asynkroninen juttu, kun ei vaihda tuota kategorian id:tä uudeksi, paitsi debugatessa
+        //pitää vielä korjata
         private fun addNewKategory(prodWithKat: ProductWithKategoryInfo, prodId: Int, changedKategory: Int): Int {
                 //TODO kokeile tehdä uusi kategoria dialogilla. Jos ei onnistu, niin tee vakioarvoille
 
@@ -506,7 +508,7 @@ class ProdAdapter(passParam: Int) : RecyclerView.Adapter<ProdAdapter.ViewHolder>
             GlobalScope.launch(context = Dispatchers.Default) {
                 val dao = ProductFragment.daoCO
                 val maxId = dao.getMaxKategoryId()
-                dao.insertKategory(maxId + 1, "Uusi", maxId + 1, true, R.drawable.talous);
+                dao.insertKategory(maxId + 1, "(Uusi)", maxId + 1, true, R.drawable.talous);//10.12.2020 Laitoin (Uusi), jotta erottuu valintalistalla pelkästä "Uusi", valinnasta, jos ei ole nimetty
                 addId= maxId + 1 //10.12.2020 SSL tästä oli jäänyt tuo + 1 pois
             }
             return addId
