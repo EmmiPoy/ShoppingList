@@ -508,7 +508,7 @@ class ProdAdapter(passParam: Int) : RecyclerView.Adapter<ProdAdapter.ViewHolder>
             GlobalScope.launch(context = Dispatchers.Default) {
                 val dao = ProductFragment.daoCO
                 val maxId = dao.getMaxKategoryId()
-                dao.insertKategory(maxId + 1, "(Uusi)", maxId + 1, true, R.drawable.talous);//10.12.2020 Laitoin (Uusi), jotta erottuu valintalistalla pelkästä "Uusi", valinnasta, jos ei ole nimetty
+                dao.insertKategory(maxId + 1, "(Uusi)", maxId + 1, true, R.drawable.uusi);//10.12.2020 Laitoin (Uusi), jotta erottuu valintalistalla pelkästä "Uusi", valinnasta, jos ei ole nimetty
                 addId= maxId + 1 //10.12.2020 SSL tästä oli jäänyt tuo + 1 pois
             }
             return addId
@@ -652,11 +652,11 @@ class ProdAdapter(passParam: Int) : RecyclerView.Adapter<ProdAdapter.ViewHolder>
             sound.play(MediaActionSound.SHUTTER_CLICK)
         }
 
-        fun  refreshFragment(view : View, katId : Int){
+        fun  refreshFragment(view : View, param : Int){
 
             val activity = view.context as AppCompatActivity
             val args = Bundle()
-            args.putInt("id", katId)
+            args.putInt("id", param)
 
             val productFragment = ProductFragment()
             activity.supportFragmentManager.beginTransaction().apply{
