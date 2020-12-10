@@ -14,7 +14,8 @@
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        android:baselineAligned="false">
 
         <CheckBox
             android:id="@+id/checkBox2"
@@ -46,7 +47,7 @@
         <Button
             android:id="@+id/prodkategoryButton"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="0dp"
             android:layout_marginEnd="8dp"
             android:layout_weight=".30"
