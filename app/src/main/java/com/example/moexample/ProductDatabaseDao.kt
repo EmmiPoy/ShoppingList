@@ -99,7 +99,7 @@ interface ProductDatabaseDao {
     @Query("SELECT p_id, p_name, p.k_id, p_onList, p_amount, p_unit, p_unit, p_collected, k_name, k_order, k_inUse, k_image  " +
             "FROM product p, kategory k where " +
             "p.k_id = k.k_id and p_onList= 1 " +
-            "ORDER BY p.k_id, p_name;")
+            "ORDER BY k.k_order, p_name;") //10.12.2020 SSL järjestys kategorian järjestyksen mukaan
     fun getShoppingListWithKategoryInfo() : List<ProductWithKategoryInfo>
 
 

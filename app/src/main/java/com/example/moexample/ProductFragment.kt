@@ -139,8 +139,7 @@ class ProductFragment : Fragment() {
             if (productAmount.isNullOrBlank()) {
                 amoutToApply="0"
             }
-            //val product = Product(0, productName,3,false, Integer.parseInt(productAmount.toString()),"kg" )
-            val product = Product(0, productName, kategoryId,false, Integer.parseInt(amoutToApply),productUnit, false)
+            val product = Product(0, productName, kategoryId,true, Integer.parseInt(amoutToApply),productUnit, false)//10.12.2020 SSL Lisätty tuote heti listalle
             mProductViewModel.addProduct(product)
         }
     }
